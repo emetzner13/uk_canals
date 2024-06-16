@@ -39,7 +39,6 @@
 
 		try {
 			/* ------------------------ Fetching data from files ------------------------ */
-
 			canal_geojsonData = await fetchGeoJSONData('/data/canals_data.geojson');
 			locks_geojsonData = await fetchGeoJSONData('/data/locks_data.geojson');
 
@@ -55,8 +54,6 @@
 			console.error('Error fetching GeoJSON data:', error);
 		}
 	});
-
-	/* ----------------------------------- UI ----------------------------------- */
 </script>
 
 <div>

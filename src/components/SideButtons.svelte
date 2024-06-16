@@ -31,16 +31,12 @@
 	/>
 	<label for="fileInput">
 		<div class={buttonStyle}>
-			<div>
-				<Plus />
-			</div>
+			<Plus />
 			Add sightings
 		</div>
 	</label>
 	<button class={buttonStyle} on:click={() => downloadUserJoinedData(userJoinedData)}>
-		<div>
-			<Download />
-		</div>
-		Download data
+		<Download />
+		Download
 	</button>
 </div>

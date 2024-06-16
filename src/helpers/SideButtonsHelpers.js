@@ -1,9 +1,9 @@
 import mapboxgl from 'mapbox-gl';
 import { cleanData } from './DataHelpers';
 import * as XLSX from 'xlsx';
+import { toasts } from 'svelte-toasts';
 
-export const buttonStyle =
-	'cursor-pointer h-[38px] bg-white shadow p-2 rounded-full flex gap-2 overflow-hidden group transition-[width,background-color,box-shadow,transform] w-10 hover:w-40';
+export const buttonStyle = 'cursor-pointer bg-white shadow p-2 px-4 rounded-full flex gap-2  group';
 
 export async function handleFileUpload(event, canal_geojsonData, map, setUserJoinedData) {
 	const file = event.target.files[0];
@@ -101,6 +101,8 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 		});
 	};
 	reader.readAsArrayBuffer(file);
+
+	toasts.success('Data uploaded successfully');
 }
 
 export function downloadUserJoinedData(userJoinedData) {
@@ -111,4 +113,5 @@ export function downloadUserJoinedData(userJoinedData) {
 	a.download = 'userJoinedData.geojson';
 	a.click();
 	URL.revokeObjectURL(url);
+	toasts.success('Data downloaded successfully');
 }

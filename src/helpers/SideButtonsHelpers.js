@@ -18,13 +18,24 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 		sightingsData.shift();
 		sightingsData = cleanData(sightingsData);
 
-		const data_dicts = sightingsData.map((entry) => ({
-			Boat: entry[0],
-			Date: entry[1],
-			FUNC_LOC: entry[2],
-			FUNC_LOC_DESC: entry[3],
-			WaterWay: entry[4]
-		}));
+		const funcLocCounts = {};
+		const currentDate = new Date();
+		const data_dicts = sightingsData.map((entry) => {
+			const funcLoc = entry[2];
+			const sightingDate = new Date(entry[1]);
+			if (funcLocCounts[funcLoc]) {
+				funcLocCounts[funcLoc]++;
+			} else {
+				funcLocCounts[funcLoc] = 1;
+			}
+			return {
+				Boat: entry[0],
+				Date: sightingDate,
+				FUNC_LOC: entry[2],
+				FUNC_LOC_DESC: entry[3],
+				WaterWay: entry[4]
+			};
+		});
 
 		const filtered_data = data_dicts
 			.map((sighting) => {
@@ -32,18 +43,24 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 					(canal) => canal.properties?.SAP_FUNC_LOC === sighting.FUNC_LOC
 				);
 				if (canal) {
+					const daysOld = Math.floor((currentDate - sighting.Date) / (1000 * 60 * 60 * 24));
 					return {
 						type: 'Feature',
 						geometry: canal.geometry,
 						properties: {
 							...sighting,
 							SAP_FUNC_LOC: canal.properties?.SAP_FUNC_LOC,
-							SAP_FUNC_LOC_DESC: canal.properties?.SAP_FUNC_LOC_DESC
+							SAP_FUNC_LOC_DESC: canal.properties?.SAP_FUNC_LOC_DESC,
+							Count: funcLocCounts[sighting.FUNC_LOC], // Add count property
+							DaysOld: daysOld // Add days old property
 						}
 					};
 				}
 			})
 			.filter((entry) => entry);
+
+		// Sort features by DaysOld in ascending order (newer sightings first)
+		filtered_data.sort((a, b) => a.properties.DaysOld - b.properties.DaysOld);
 
 		const userJoinedData = {
 			type: 'FeatureCollection',
@@ -52,10 +69,18 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 
 		setUserJoinedData(userJoinedData);
 
-		map.addSource('user-joined-data', {
-			type: 'geojson',
-			data: userJoinedData
-		});
+		if (map.getSource('user-joined-data')) {
+			map.getSource('user-joined-data').setData(userJoinedData);
+		} else {
+			map.addSource('user-joined-data', {
+				type: 'geojson',
+				data: userJoinedData
+			});
+		}
+
+		if (map.getLayer('user-joined-data-layer')) {
+			map.removeLayer('user-joined-data-layer');
+		}
 
 		map.addLayer({
 			id: 'user-joined-data-layer',
@@ -66,8 +91,16 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 				'line-cap': 'round'
 			},
 			paint: {
-				'line-color': 'green',
-				'line-width': 1.5
+				'line-color': [
+					'interpolate',
+					['linear'],
+					['get', 'DaysOld'],
+					0,
+					'rgba(102, 255, 51, 1)', // Newer sightings are darker green
+					365,
+					'rgba(102, 255, 51, 0.3)' // Older sightings are lighter green
+				],
+				'line-width': ['get', 'Count']
 			}
 		});
 
@@ -84,10 +117,10 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 				.setLngLat(e.lngLat)
 				.setHTML(
 					`<p>${feature.properties?.Boat}</p>
-          <h3>${feature.properties?.SAP_FUNC_LOC}</h3>
-          <p>${feature.properties?.FUNC_LOC_DESC}</p>
-          <p>${feature.properties?.WaterWay}</p>
-          <p>${feature.properties?.Date}</p>`
+					<h3>${feature.properties?.SAP_FUNC_LOC}</h3>
+					<p>${feature.properties?.FUNC_LOC_DESC}</p>
+					<p>${feature.properties?.WaterWay}</p>
+					<p>${feature.properties?.Date.toISOString().split('T')[0]}</p>`
 				)
 				.addTo(map);
 		});
@@ -99,6 +132,27 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 		map.on('mouseleave', 'user-joined-data-layer', () => {
 			map.getCanvas().style.cursor = '';
 		});
+
+		// Collect all coordinates
+		const coordinates = [];
+		filtered_data.forEach((feature) => {
+			if (feature.geometry.type === 'LineString') {
+				coordinates.push(...feature.geometry.coordinates);
+			} else if (feature.geometry.type === 'MultiLineString') {
+				feature.geometry.coordinates.forEach((line) => coordinates.push(...line));
+			}
+		});
+
+		// Compute bounding box
+		const bounds = coordinates.reduce(
+			(bounds, coord) => {
+				return bounds.extend(coord);
+			},
+			new mapboxgl.LngLatBounds(coordinates[0], coordinates[0])
+		);
+
+		// Fit map to bounds
+		map.fitBounds(bounds, { padding: 20 });
 	};
 	reader.readAsArrayBuffer(file);
 

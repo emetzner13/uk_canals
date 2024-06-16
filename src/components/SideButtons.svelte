@@ -2,22 +2,18 @@
 	/* --------------------------------- IMPORTS -------------------------------- */
 
 	import { Download, Plus } from 'lucide-svelte';
-	import {
-		buttonStyle,
-		downloadUserJoinedData,
-		handleFileUpload
-	} from '../helpers/SideButtonsHelpers';
+	import { buttonStyle, downloadUserData, handleFileUpload } from '../helpers/SideButtonsHelpers';
+	import { UserDataStore } from '../store/store';
 
 	/* -------------------------------- VARIABLES ------------------------------- */
 
 	export let map;
 	export let canal_geojsonData;
-	let userJoinedData;
 
 	/* --------------------------------- HELPERS -------------------------------- */
 
-	function setUserJoinedData(data) {
-		userJoinedData = data;
+	function setUserData(data) {
+		UserDataStore.set(data); // Directly set the store
 	}
 </script>
 
@@ -27,7 +23,7 @@
 		accept=".xlsx"
 		class="hidden"
 		id="fileInput"
-		on:change={(e) => handleFileUpload(e, canal_geojsonData, map, setUserJoinedData)}
+		on:change={(e) => handleFileUpload(e, canal_geojsonData, map, setUserData)}
 	/>
 	<label for="fileInput">
 		<div class={buttonStyle}>
@@ -35,7 +31,7 @@
 			Add sightings
 		</div>
 	</label>
-	<button class={buttonStyle} on:click={() => downloadUserJoinedData(userJoinedData)}>
+	<button class={buttonStyle} on:click={() => downloadUserData($UserDataStore)}>
 		<Download />
 		Download
 	</button>

@@ -1,6 +1,7 @@
 <script>
 	/* --------------------------------- IMPORTS -------------------------------- */
 	import { Eye } from 'lucide-svelte';
+	import { UserDataStore } from '../store/store';
 
 	/* -------------------------------- VARIABLES ------------------------------- */
 
@@ -12,17 +13,7 @@
 		sightings: true
 	};
 
-	/* --------------------------------- HELPERS -------------------------------- */
-
-	const toggleVisibility = (layer, visibility) => {
-		if (visibility) {
-			map.setLayoutProperty(layer, 'visibility', 'visible');
-		} else {
-			map.setLayoutProperty(layer, 'visibility', 'none');
-		}
-	};
-
-	const VisibilityCheckBoxes = [
+	let VisibilityCheckBoxes = [
 		{
 			name: 'Canals',
 			layer: 'canals-layer',
@@ -34,14 +25,37 @@
 			layer: 'locks-layer',
 			bind: 'locks',
 			color: 'red'
-		},
-		{
-			name: 'Sightings',
-			layer: 'user-joined-data-layer',
-			bind: 'sightings',
-			color: 'green'
 		}
 	];
+
+	/* --------------------------------- HELPERS -------------------------------- */
+
+	const toggleVisibility = (layer, visibility) => {
+		if (visibility) {
+			map.setLayoutProperty(layer, 'visibility', 'visible');
+		} else {
+			map.setLayoutProperty(layer, 'visibility', 'none');
+		}
+	};
+
+	// Reactive statement to update VisibilityCheckBoxes based on store data
+	$: {
+		const userData = $UserDataStore;
+		const sightingsExists = VisibilityCheckBoxes.some((item) => item.bind === 'sightings');
+		if (userData.features && userData.features.length > 0) {
+			if (!sightingsExists) {
+				VisibilityCheckBoxes = [
+					{
+						name: 'Sightings',
+						layer: 'user-joined-data-layer',
+						bind: 'sightings',
+						color: 'green'
+					},
+					...VisibilityCheckBoxes
+				];
+			}
+		}
+	}
 </script>
 
 <button

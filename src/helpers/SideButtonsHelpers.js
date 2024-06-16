@@ -3,9 +3,9 @@ import { cleanData } from './DataHelpers';
 import * as XLSX from 'xlsx';
 import { toasts } from 'svelte-toasts';
 
-export const buttonStyle = 'cursor-pointer bg-white shadow p-2 px-4 rounded-full flex gap-2  group';
+export const buttonStyle = 'cursor-pointer bg-white shadow p-2 px-4 rounded-full flex gap-2 group';
 
-export async function handleFileUpload(event, canal_geojsonData, map, setUserJoinedData) {
+export async function handleFileUpload(event, canal_geojsonData, map, setUserData) {
 	const file = event.target.files[0];
 	const reader = new FileReader();
 	reader.onload = (e) => {
@@ -62,19 +62,19 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 		// Sort features by DaysOld in ascending order (newer sightings first)
 		filtered_data.sort((a, b) => a.properties.DaysOld - b.properties.DaysOld);
 
-		const userJoinedData = {
+		const userData = {
 			type: 'FeatureCollection',
 			features: filtered_data
 		};
 
-		setUserJoinedData(userJoinedData);
+		setUserData(userData);
 
 		if (map.getSource('user-joined-data')) {
-			map.getSource('user-joined-data').setData(userJoinedData);
+			map.getSource('user-joined-data').setData(userData);
 		} else {
 			map.addSource('user-joined-data', {
 				type: 'geojson',
-				data: userJoinedData
+				data: userData
 			});
 		}
 
@@ -159,12 +159,12 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserJoi
 	toasts.success('Data uploaded successfully');
 }
 
-export function downloadUserJoinedData(userJoinedData) {
-	const blob = new Blob([JSON.stringify(userJoinedData)], { type: 'application/json' });
+export function downloadUserData(userData) {
+	const blob = new Blob([JSON.stringify(userData)], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
 	a.href = url;
-	a.download = 'userJoinedData.geojson';
+	a.download = 'userData.geojson';
 	a.click();
 	URL.revokeObjectURL(url);
 	toasts.success('Data downloaded successfully');

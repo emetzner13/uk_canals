@@ -16,13 +16,12 @@
 
 	export let map;
 	let mapContainer;
-	let lng, lat, zoom;
 	let canal_geojsonData;
 	let locks_geojsonData;
 
-	lng = -1.6224;
-	lat = 52.9033;
-	zoom = 6;
+	let lng = -1.6224;
+	let lat = 52.9033;
+	let zoom = 6;
 
 	/* -------------------------------- ON MOUNT -------------------------------- */
 
@@ -37,22 +36,24 @@
 			zoom: initialState.zoom
 		});
 
-		try {
-			/* ------------------------ Fetching data from files ------------------------ */
-			canal_geojsonData = await fetchGeoJSONData('/data/canals_data.geojson');
-			locks_geojsonData = await fetchGeoJSONData('/data/locks_data.geojson');
+		map.once('load', async () => {
+			try {
+				/* ------------------------ Fetching data from files ------------------------ */
+				canal_geojsonData = await fetchGeoJSONData('/data/canals_data.geojson');
+				locks_geojsonData = await fetchGeoJSONData('/data/locks_data.geojson');
 
-			/* ------------------------ Adding layers to the map ------------------------ */
+				/* ------------------------ Adding layers to the map ------------------------ */
 
-			addCanalsLayer(map, canal_geojsonData);
-			addLocksLayer(map, locks_geojsonData);
+				addCanalsLayer(map, canal_geojsonData);
+				addLocksLayer(map, locks_geojsonData);
 
-			/* ------------------- Adding click handlers to the layers ------------------ */
+				/* ------------------- Adding click handlers to the layers ------------------ */
 
-			addLayerClickHandlers(map);
-		} catch (error) {
-			console.error('Error fetching GeoJSON data:', error);
-		}
+				addLayerClickHandlers(map);
+			} catch (error) {
+				console.error('Error fetching GeoJSON data:', error);
+			}
+		});
 	});
 </script>
 

@@ -120,7 +120,7 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 					<h3>${feature.properties?.SAP_FUNC_LOC}</h3>
 					<p>${feature.properties?.FUNC_LOC_DESC}</p>
 					<p>${feature.properties?.WaterWay}</p>
-					<p>${feature.properties?.Date.toISOString().split('T')[0]}</p>`
+					<p>${feature.properties?.Date?.toString()?.split('T')?.[0]}</p>`
 				)
 				.addTo(map);
 		});

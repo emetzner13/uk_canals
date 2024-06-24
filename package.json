@@ -28,6 +28,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@mapbox/mapbox-gl-geocoder": "^5.0.2",
 		"lucide-svelte": "^0.390.0",
 		"mapbox-gl": "^3.4.0",
 		"papaparse": "^5.4.1",

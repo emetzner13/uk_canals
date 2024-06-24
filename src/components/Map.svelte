@@ -1,6 +1,7 @@
 <script>
 	/* --------------------------------- IMPORTS -------------------------------- */
 	import mapboxgl from 'mapbox-gl';
+	import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 	import { onMount } from 'svelte';
 	import SideButtons from './SideButtons.svelte';
 	import VisibilityControl from './VisibilityControl.svelte';
@@ -38,6 +39,13 @@
 
 		map.once('load', async () => {
 			try {
+				/* ------------------- Add Mapbox Geocoder ------------------ */
+				const geocoder = new MapboxGeocoder({
+					accessToken: MAPBOX_ACCESS,
+					mapboxgl: mapboxgl
+				});
+				map.addControl(geocoder, 'top-right');
+
 				/* ------------------------ Fetching data from files ------------------------ */
 				canal_geojsonData = await fetchGeoJSONData('/data/canals_data.geojson');
 				locks_geojsonData = await fetchGeoJSONData('/data/locks_data.geojson');
@@ -59,9 +67,13 @@
 
 <div>
 	<div class="absolute w-screen h-screen" bind:this={mapContainer} />
-	<p class="text-xl text-center w-full z-10 absolute top-0 mr-auto font-semibold p-2">
+	<p class="text-xl text-center w-full absolute top-0 mr-auto font-semibold p-2">
 		UK Canal Route Builder
 	</p>
 	<SideButtons {map} {canal_geojsonData} />
 	<VisibilityControl {map} />
 </div>
+
+<style>
+	@import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+</style>

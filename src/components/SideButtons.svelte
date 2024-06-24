@@ -1,7 +1,7 @@
 <script>
 	/* --------------------------------- IMPORTS -------------------------------- */
 
-	import { Download, Plus, Search } from 'lucide-svelte';
+	import { Download, Plus } from 'lucide-svelte';
 	import { buttonStyle, downloadUserData, handleFileUpload } from '../helpers/SideButtonsHelpers';
 	import { UserDataStore } from '../store/store';
 
@@ -17,15 +17,7 @@
 	}
 </script>
 
-<div class="absolute right-4 top-5 z-10 flex flex-col items-end gap-5">
-	<!-- <div class="relative">
-		<Search class="absolute left-4 top-[10px] z-10" size={20} />
-		<input
-			type="search"
-			placeholder="Search"
-			class="w-56 h-10 shadow p-2 px-4 rounded-full pl-11 placeholder:text-gray-700"
-		/>
-	</div> -->
+<div class="absolute right-4 top-[70px] z-10 flex flex-col items-end gap-4">
 	<input
 		type="file"
 		accept=".xlsx"

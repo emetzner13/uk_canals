@@ -17,7 +17,7 @@
 	}
 </script>
 
-<div class="absolute right-4 top-[70px] z-10 flex flex-col items-end gap-4">
+<div class="absolute right-4 top-[70px] flex flex-col items-end gap-4">
 	<input
 		type="file"
 		accept=".xlsx"

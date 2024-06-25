@@ -1,6 +1,6 @@
 <script>
 	/* --------------------------------- IMPORTS -------------------------------- */
-	import { Eye } from 'lucide-svelte';
+	import { View } from 'lucide-svelte';
 	import { UserDataStore } from '../store/store';
 
 	/* -------------------------------- VARIABLES ------------------------------- */
@@ -59,14 +59,12 @@
 </script>
 
 <button
-	class="absolute left-4 top-5 z-10 cursor-pointer bg-white shadow overflow-hidden h-auto flex flex-col gap-5 rounded-xl p-5"
+	class="absolute left-4 top-5 z-10 cursor-pointer bg-white shadow overflow-hidden h-auto flex flex-col gap-4 rounded-xl p-5"
 >
-	<div class="flex gap-2">
-		<div>
-			<Eye />
-		</div>
-		<span> Visibility </span>
-	</div>
+	<h2 class="text-lg font-bold flex gap-2 items-center">
+		<View />
+		Visibility
+	</h2>
 	<div class="flex flex-col gap-2 items-start">
 		{#each VisibilityCheckBoxes as { name, layer, bind, color }}
 			<div class="flex gap-5 items-center">

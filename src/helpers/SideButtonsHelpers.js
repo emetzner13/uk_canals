@@ -16,21 +16,22 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 
 		let sightingsData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 		sightingsData.shift();
+
 		sightingsData = cleanData(sightingsData);
 
 		const funcLocCounts = {};
 		const currentDate = new Date();
 		const data_dicts = sightingsData.map((entry) => {
 			const funcLoc = entry[2];
-			const sightingDate = new Date(entry[1]);
 			if (funcLocCounts[funcLoc]) {
 				funcLocCounts[funcLoc]++;
 			} else {
 				funcLocCounts[funcLoc] = 1;
 			}
+
 			return {
 				Boat: entry[0],
-				Date: sightingDate,
+				Date: entry[1],
 				FUNC_LOC: entry[2],
 				FUNC_LOC_DESC: entry[3],
 				WaterWay: entry[4]

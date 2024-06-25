@@ -12,6 +12,7 @@
 		addLayerClickHandlers,
 		MAPBOX_ACCESS
 	} from '../helpers/MapHelpers';
+	import Stats from './Stats.svelte';
 
 	/* -------------------------------- VARIABLES ------------------------------- */
 
@@ -72,6 +73,7 @@
 	</p>
 	<SideButtons {map} {canal_geojsonData} />
 	<VisibilityControl {map} />
+	<Stats {map} />
 </div>
 
 <style>

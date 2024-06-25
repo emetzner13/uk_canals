@@ -7,13 +7,13 @@
 }
 
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl input::placeholder {
-	@apply !text-gray-800 !ml-2;
+	@apply !text-gray-800;
 }
 
 .mapboxgl-ctrl-geocoder--input {
 	@apply !py-4 !outline-none !border-none;
 }
 
-.mapboxgl-ctrl-geocoder--icon {
-	@apply !left-4 !fill-black !w-6 !h-6 !top-[6px];
+.mapboxgl-ctrl-geocoder--icon-search {
+	@apply !w-6 !h-6 !fill-black !left-3 !top-[6px];
 }

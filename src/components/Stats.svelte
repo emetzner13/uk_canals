@@ -34,8 +34,11 @@
 			<InfoDisplay label="Boat" value={data?.features?.[0]?.properties?.Boat ?? 'N/A'} />
 			<InfoDisplay label="First Sighting" value={earliestDate?.toLocaleString() ?? 'N/A'} />
 			<InfoDisplay label="Latest Sighting" value={latestDate?.toLocaleString() ?? 'N/A'} />
-			<InfoDisplay label="Distance Travelled" value={`${furthestDistance.toFixed(2)} km`} />
-			<InfoDisplay label="Time Taken" value={timeTaken ?? '0.0'} />
+			<InfoDisplay label="Approximate Travel Time" value={timeTaken ?? '0.0'} />
+			<InfoDisplay
+				label="Approximate Distance Travelled"
+				value={`${furthestDistance.toFixed(2)} km`}
+			/>
 		</div>
 	</div>
 {/if}

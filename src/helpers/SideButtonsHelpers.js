@@ -136,9 +136,9 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 					0,
 					'rgb(196, 55, 53)', // Newer sightings are brighter red
 					365,
-					'rgb(201, 129, 129)' // Older sightings are softer red
+					'rgb(252, 177, 3)' // Older sightings are softer red
 				],
-				'line-width': ['*', 2, ['get', 'Count']]
+				'line-width': ['+', 1, ['*', 2, ['get', 'Count']]]
 			}
 		});
 
@@ -190,7 +190,7 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 		);
 
 		// Fit map to bounds
-		map.fitBounds(bounds, { padding: 20 });
+		map.fitBounds(bounds, { padding: 100 });
 	};
 	reader.readAsArrayBuffer(file);
 

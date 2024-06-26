@@ -60,31 +60,19 @@ export function calculateTimeTaken(features) {
 
 	// Iterate over each feature
 	features?.forEach((feature) => {
-		const dateStr = feature?.properties?.Date; // Get the date string from the feature properties
-		if (!isNaN(dateStr)) {
-			return; // Skip if the date string is not valid
-		}
-		if (dateStr) {
-			// Split the date string into its components
-			const parts = dateStr.split(/[\s/:-]+/);
-			if (parts.length === 6) {
-				const day = parseInt(parts[0], 10);
-				const month = parseInt(parts[1], 10) - 1; // Months are zero-indexed in JavaScript
-				const year = parseInt(parts[2], 10);
-				const hours = parseInt(parts[3], 10);
-				const minutes = parseInt(parts[4], 10);
-				const seconds = parseInt(parts[5], 10);
+		const dateObject = feature?.properties?.Date; // Get the date string from the feature properties
 
-				const date = new Date(year, month, day, hours, minutes, seconds); // Create a Date object
-
-				if (!isNaN(date.getTime())) {
-					if (!earliestDate || date < earliestDate) {
-						earliestDate = date; // Update the earliest date
-					}
-					if (!latestDate || date > latestDate) {
-						latestDate = date; // Update the latest date
-					}
+		if (dateObject) {
+			const date = new Date(dateObject); // Create a new Date object from the date string
+			if (date.toString() !== 'Invalid Date') {
+				if (!earliestDate || date < earliestDate) {
+					earliestDate = date; // Update the earliest date if the current date is earlier
 				}
+				if (!latestDate || date > latestDate) {
+					latestDate = date; // Update the latest date if the current date is later
+				}
+			} else {
+				console.warn(`Invalid Date: ${dateObject}`);
 			}
 		}
 	});

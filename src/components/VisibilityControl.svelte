@@ -9,7 +9,7 @@
 
 	let visibility = {
 		canals: true,
-		locks: true,
+		locks: false,
 		sightings: true
 	};
 

@@ -13,15 +13,48 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 		const workbook = XLSX.read(data, { type: 'array' });
 		const sheetName = workbook.SheetNames[0];
 		const worksheet = workbook.Sheets[sheetName];
-
-		let sightingsData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+		let sightingsData = XLSX.utils.sheet_to_json(worksheet, {
+			header: 1,
+			raw: true,
+			rawNumbers: false // Ensure we get raw string values of the dates
+		});
 		sightingsData.shift();
-
 		sightingsData = cleanData(sightingsData);
 
 		const funcLocCounts = {};
-		const currentDate = new Date();
-		const data_dicts = sightingsData.map((entry) => {
+		const data_dicts = [];
+
+		sightingsData.forEach((entry) => {
+			let dateStr = entry[1];
+			const dateParts = dateStr.split(' ');
+			const date = dateParts[0].split('/');
+			const time = dateParts[1] ? dateParts[1].split(':') : ['00', '00', '00'];
+
+			// Correct the year if it's in two digits
+			if (date[2] && date[2].length === 2) {
+				date[2] = `20${date[2]}`;
+			}
+
+			// Correct the month and day if they're in single digits
+			date[0] = date[0].padStart(2, '0');
+			date[1] = date[1].padStart(2, '0');
+
+			// Add missing seconds if not present
+			if (time.length === 2) {
+				time.push('00');
+			}
+
+			//Correct hours if they are in single digits
+			time[0] = time[0].padStart(2, '0');
+
+			// Reconstruct the date string
+			const formattedDateStr = `${date[2]}-${date[1]}-${date[0]}T${time.join(':')}`;
+			const dateObj = new Date(formattedDateStr);
+
+			if (dateObj.toString() === 'Invalid Date') {
+				console.error(`Invalid Date: ${entry[1]} after correction.`);
+			}
+
 			const funcLoc = entry[2];
 			if (funcLocCounts[funcLoc]) {
 				funcLocCounts[funcLoc]++;
@@ -29,15 +62,19 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 				funcLocCounts[funcLoc] = 1;
 			}
 
-			return {
+			const bsightings_Obj = {
 				Boat: entry[0],
-				Date: entry[1],
+				Date: dateObj,
 				FUNC_LOC: entry[2],
 				FUNC_LOC_DESC: entry[3],
 				WaterWay: entry[4]
 			};
+
+			data_dicts.push(bsightings_Obj);
 		});
 
+		console.table(data_dicts);
+		let currentDate = new Date();
 		const filtered_data = data_dicts
 			.map((sighting) => {
 				const canal = canal_geojsonData.features.find(
@@ -101,7 +138,7 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 					365,
 					'rgb(201, 129, 129)' // Older sightings are softer red
 				],
-				'line-width': ["*", 2, ['get', 'Count']]
+				'line-width': ['*', 2, ['get', 'Count']]
 			}
 		});
 

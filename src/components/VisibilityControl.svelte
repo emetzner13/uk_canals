@@ -49,7 +49,7 @@
 						name: 'Sightings',
 						layer: 'user-joined-data-layer',
 						bind: 'sightings',
-						color: 'green'
+						color: 'red'
 					},
 					...VisibilityCheckBoxes
 				];

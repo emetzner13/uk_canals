@@ -97,11 +97,11 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 					['linear'],
 					['get', 'DaysOld'],
 					0,
-					'rgba(102, 255, 51, 1)', // Newer sightings are darker green
+					'rgb(196, 55, 53)', // Newer sightings are brighter red
 					365,
-					'rgba(102, 255, 51, 0.3)' // Older sightings are lighter green
+					'rgb(201, 129, 129)' // Older sightings are softer red
 				],
-				'line-width': ['get', 'Count']
+				'line-width': ["*", 2, ['get', 'Count']]
 			}
 		});
 

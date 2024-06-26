@@ -23,7 +23,7 @@ export function addCanalsLayer(map, data) {
 			'line-cap': 'round'
 		},
 		paint: {
-			'line-color': 'blue',
+			'line-color': 'rgb(48, 142, 230)',
 			'line-width': 1.5
 		}
 	});
@@ -39,10 +39,13 @@ export function addLocksLayer(map, data) {
 		id: 'locks-layer',
 		type: 'circle',
 		source: 'locks',
+		layout: {
+			'visibility': 'none'
+		},
 		paint: {
 			'circle-radius': 3,
-			'circle-stroke-width': 1,
-			'circle-color': 'red',
+			'circle-stroke-width': .5,
+			'circle-color': 'rgba(27, 9, 158, .8)',
 			'circle-stroke-color': 'white'
 		}
 	});

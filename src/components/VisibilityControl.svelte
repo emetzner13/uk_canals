@@ -18,13 +18,13 @@
 			name: 'Canals',
 			layer: 'canals-layer',
 			bind: 'canals',
-			color: 'blue'
+			color: 'rgb(48, 142, 230)',
 		},
 		{
 			name: 'Locks',
 			layer: 'locks-layer',
 			bind: 'locks',
-			color: 'red'
+			color: 'rgb(27, 9, 158)',
 		}
 	];
 
@@ -63,7 +63,7 @@
 >
 	<h2 class="text-lg font-bold flex gap-2 items-center">
 		<View />
-		Visibility
+		Legend
 	</h2>
 	<div class="flex flex-col gap-2 items-start">
 		{#each VisibilityCheckBoxes as { name, layer, bind, color }}

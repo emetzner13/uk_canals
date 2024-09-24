@@ -15,8 +15,7 @@
 	import Stats from './Stats.svelte';
 
 	/* -------------------------------- VARIABLES ------------------------------- */
-
-	export let map;
+	let map;
 	let mapContainer;
 	let canal_geojsonData;
 	let locks_geojsonData;
@@ -25,8 +24,14 @@
 	let lat = 52.9033;
 	let zoom = 6;
 
-	/* -------------------------------- ON MOUNT -------------------------------- */
+	function resetStats() {
+		const statsComponent = document.querySelector('stats-component');
+		if (statsComponent) {
+			statsComponent.resetStats();
+		}
+	}
 
+	/* -------------------------------- ON MOUNT -------------------------------- */
 	onMount(async () => {
 		const initialState = { lng: lng, lat: lat, zoom: zoom };
 
@@ -52,12 +57,10 @@
 				locks_geojsonData = await fetchGeoJSONData('/data/locks_data.geojson');
 
 				/* ------------------------ Adding layers to the map ------------------------ */
-
 				addCanalsLayer(map, canal_geojsonData);
 				addLocksLayer(map, locks_geojsonData);
 
 				/* ------------------- Adding click handlers to the layers ------------------ */
-
 				addLayerClickHandlers(map);
 			} catch (error) {
 				console.error('Error fetching GeoJSON data:', error);
@@ -71,9 +74,9 @@
 	<p class="text-xl text-center w-full absolute top-0 mr-auto font-semibold p-2">
 		UK Canal Route Builder
 	</p>
-	<SideButtons {map} {canal_geojsonData} />
+	<SideButtons {map} {canal_geojsonData} {resetStats} />
 	<VisibilityControl {map} />
-	<Stats {map} />
+	<Stats {canal_geojsonData} />
 </div>
 
 <style>

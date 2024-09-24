@@ -1,91 +1,156 @@
-// StatsHelpers.js
 import * as turf from '@turf/turf';
 
 /**
- * Calculates the furthest distance between any two endpoints in the provided features.
+ * Calculates the time taken and total distance traveled based on sightings data and canal data.
  *
- * @param {Array} features - An array of GeoJSON features.
- * @returns {number} The furthest distance between any two endpoints.
+ * @param {Array} sightings - An array of GeoJSON features representing sightings.
+ * @param {Array} canals - An array of GeoJSON features representing canals.
+ * @returns {Object} An object containing the earliest date, latest date, total time taken, and total distance traveled.
  */
-export function calculateFurthestDistance(features) {
-	let furthestDistance = 0; // Initialize the furthest distance to 0
-	let endpoints = []; // Array to store all endpoints
+export function calculateTimeAndDistance(sightings, canals) {
+	if (!Array.isArray(sightings) || !Array.isArray(canals)) {
+		console.error('Invalid input data. Both sightings and canals should be arrays.');
+		return {
+			earliestDate: null,
+			latestDate: null,
+			timeTaken: '0.0',
+			totalDistance: 0,
+			canalDetails: []
+		};
+	}
 
-	// Iterate over each feature
-	features?.forEach((feature) => {
-		const coordinates = feature?.geometry?.coordinates; // Get the coordinates of the feature
-		if (Array.isArray(coordinates) && coordinates.length > 1) {
-			endpoints.push(coordinates[0]); // Add the start point to endpoints
-			endpoints.push(coordinates[coordinates.length - 1]); // Add the end point to endpoints
+	let earliestDate = null;
+	let latestDate = null;
+	let totalDistance = 0;
+	let previousEndPoint = null;
+	let currentCanal = null;
+	let canalDetails = [];
+	let addedCanals = new Set();
+
+	// Parse dates and sort sightings
+	sightings.forEach((sighting) => {
+		const dateStr = sighting?.properties?.Date;
+		if (typeof dateStr === 'string') {
+			const date = parseDate(dateStr);
+			sighting.properties.Date = date;
 		}
 	});
 
-	// Calculate the distance between each pair of endpoints
-	for (let i = 0; i < endpoints.length; i++) {
-		for (let j = i + 1; j < endpoints.length; j++) {
-			const startCoord = endpoints[i];
-			const endCoord = endpoints[j];
-			// Check if the coordinates are valid
-			if (
-				Array.isArray(startCoord) &&
-				startCoord.length >= 2 &&
-				Array.isArray(endCoord) &&
-				endCoord.length >= 2 &&
-				typeof startCoord[0] === 'number' &&
-				typeof startCoord[1] === 'number' &&
-				typeof endCoord[0] === 'number' &&
-				typeof endCoord[1] === 'number'
-			) {
-				// Calculate the distance between the two points
-				const distance = turf.distance(turf.point(startCoord), turf.point(endCoord));
-				if (distance > furthestDistance) {
-					furthestDistance = distance; // Update the furthest distance if a greater distance is found
-				}
+	sightings.sort((a, b) => a.properties.Date - b.properties.Date);
+
+	sightings.forEach((sighting, index) => {
+		const date = sighting?.properties?.Date;
+		console.log('Date:', date);
+		if (!isNaN(date?.getTime())) {
+			if (!earliestDate || date < earliestDate) {
+				earliestDate = date;
+			}
+			if (!latestDate || date > latestDate) {
+				latestDate = date;
 			}
 		}
-	}
 
-	return furthestDistance; // Return the furthest distance found
-}
+		const sapFuncLoc = sighting?.properties?.SAP_FUNC_LOC;
+		const canal = canals.find((c) => c.properties.SAP_FUNC_LOC === sapFuncLoc);
 
-/**
- * Calculates the time taken between the earliest and latest dates in the provided features.
- *
- * @param {Array} features - An array of GeoJSON features.
- * @returns {Object} An object containing the earliest date, latest date, and time taken.
- */
-export function calculateTimeTaken(features) {
-	let earliestDate = null; // Initialize the earliest date to null
-	let latestDate = null; // Initialize the latest date to null
+		if (canal) {
+			const coordinates = canal.geometry.coordinates;
+			const startPoint = coordinates[0];
+			const endPoint = coordinates[coordinates.length - 1];
 
-	// Iterate over each feature
-	features?.forEach((feature) => {
-		const dateObject = feature?.properties?.Date; // Get the date string from the feature properties
+			if (isValidCoordinate(startPoint) && isValidCoordinate(endPoint)) {
+				if (currentCanal && currentCanal !== sapFuncLoc) {
+					if (!addedCanals.has(currentCanal)) {
+						totalDistance += canal.properties.Shape__Length / 1000; // Converting meters to kilometers
+						canalDetails.push({
+							name: canal.properties.SAP_NAME,
+							length: canal.properties.Shape__Length / 1000
+						});
+						addedCanals.add(currentCanal);
+					}
 
-		if (dateObject) {
-			const date = new Date(dateObject); // Create a new Date object from the date string
-			if (date.toString() !== 'Invalid Date') {
-				if (!earliestDate || date < earliestDate) {
-					earliestDate = date; // Update the earliest date if the current date is earlier
+					if (previousEndPoint) {
+						const pathDistance = findPathDistance(canals, previousEndPoint, startPoint);
+						if (pathDistance !== null) {
+							totalDistance += pathDistance;
+							canalDetails.push({ name: 'Path Distance', length: pathDistance });
+						} else {
+							const directDistance = turf.distance(
+								turf.point(previousEndPoint),
+								turf.point(startPoint)
+							);
+							totalDistance += directDistance;
+							canalDetails.push({ name: 'Direct Distance', length: directDistance });
+						}
+					}
+					totalDistance += canal.properties.Shape__Length / 1000; // Converting meters to kilometers
+					canalDetails.push({
+						name: canal.properties.SAP_NAME,
+						length: canal.properties.Shape__Length / 1000
+					});
+				} else if (
+					!currentCanal ||
+					(currentCanal === sapFuncLoc &&
+						(index === 0 || sightings[index - 1]?.properties?.SAP_FUNC_LOC !== sapFuncLoc))
+				) {
+					if (!addedCanals.has(sapFuncLoc)) {
+						totalDistance += canal.properties.Shape__Length / 1000; // Converting meters to kilometers
+						canalDetails.push({
+							name: canal.properties.SAP_NAME,
+							length: canal.properties.Shape__Length / 1000
+						});
+						addedCanals.add(sapFuncLoc);
+					}
 				}
-				if (!latestDate || date > latestDate) {
-					latestDate = date; // Update the latest date if the current date is later
-				}
+
+				currentCanal = sapFuncLoc;
+				previousEndPoint = endPoint;
 			} else {
-				console.warn(`Invalid Date: ${dateObject}`);
+				console.warn('Invalid coordinates in canal data:', { startPoint, endPoint });
 			}
+		} else {
+			console.warn('No matching canal found for SAP_FUNC_LOC:', sapFuncLoc);
 		}
 	});
 
 	let timeTaken = null;
 	if (earliestDate && latestDate) {
-		const timeDifference = Math.abs(latestDate.getTime() - earliestDate.getTime()); // Calculate the time difference
-		timeTaken = millisecondsToTime(timeDifference); // Convert the time difference to a readable format
+		const timeDifference = Math.abs(latestDate.getTime() - earliestDate.getTime());
+		timeTaken = millisecondsToTime(timeDifference);
 	} else {
 		console.warn('No valid dates found.');
 	}
 
-	return { earliestDate, latestDate, timeTaken }; // Return the earliest date, latest date, and time taken
+	console.log('Canal details:', canalDetails);
+
+	return { earliestDate, latestDate, timeTaken, totalDistance, canalDetails };
+}
+
+/**
+ * Parses a date string in various formats into a Date object.
+ *
+ * @param {string} dateStr - The date string to parse.
+ * @returns {Date} The parsed Date object.
+ */
+function parseDate(dateStr) {
+	if (typeof dateStr !== 'string') {
+		return new Date(NaN);
+	}
+
+	const parts = dateStr.split(/[\s/:-]+/);
+	let day, month, year, hours, minutes, seconds;
+
+	if (parts.length === 6) {
+		[day, month, year, hours, minutes, seconds] = parts.map((part) => parseInt(part, 10));
+		month -= 1; // JavaScript months are 0-based
+		return new Date(year, month, day, hours, minutes, seconds);
+	} else if (parts.length === 5) {
+		[day, month, year, hours, minutes] = parts.map((part) => parseInt(part, 10));
+		month -= 1; // JavaScript months are 0-based
+		return new Date(year, month, day, hours, minutes, 0);
+	} else {
+		return new Date(NaN); // Return an invalid date if parsing fails
+	}
 }
 
 /**
@@ -109,4 +174,61 @@ function millisecondsToTime(milliseconds) {
 	} else {
 		return `${seconds} seconds`;
 	}
+}
+
+/**
+ * Checks if the coordinate is valid (i.e., an array of two numbers).
+ *
+ * @param {Array} coordinate - The coordinate to validate.
+ * @returns {boolean} True if the coordinate is valid, false otherwise.
+ */
+function isValidCoordinate(coordinate) {
+	return (
+		Array.isArray(coordinate) &&
+		coordinate.length === 2 &&
+		typeof coordinate[0] === 'number' &&
+		typeof coordinate[1] === 'number'
+	);
+}
+
+/**
+ * Finds the path distance between two points if available.
+ *
+ * @param {Array} canals - An array of GeoJSON features representing canals.
+ * @param {Array} startPoint - The starting point coordinates.
+ * @param {Array} endPoint - The ending point coordinates.
+ * @returns {number|null} The path distance or null if no path is found.
+ */
+function findPathDistance(canals, startPoint, endPoint) {
+	const paths = findConnectingCanals(canals, startPoint, endPoint);
+	if (paths.length > 0) {
+		return paths.reduce((total, canal) => total + canal.properties.Shape__Length / 1000, 0); // Converting meters to kilometers
+	}
+	return null;
+}
+
+/**
+ * Finds all connecting canals between two points if available.
+ *
+ * @param {Array} canals - An array of GeoJSON features representing canals.
+ * @param {Array} startPoint - The starting point coordinates.
+ * @param {Array} endPoint - The ending point coordinates.
+ * @returns {Array} An array of found canals or an empty array if no connecting canals are found.
+ */
+function findConnectingCanals(canals, startPoint, endPoint) {
+	const tolerance = 0.01; // Tolerance in degrees (~1km)
+	const candidates = canals.filter((canal) => {
+		const coordinates = canal.geometry.coordinates;
+		const canalStartPoint = coordinates[0];
+		const canalEndPoint = coordinates[coordinates.length - 1];
+
+		return (
+			isValidCoordinate(canalStartPoint) &&
+			isValidCoordinate(canalEndPoint) &&
+			(turf.distance(turf.point(canalStartPoint), turf.point(startPoint)) <= tolerance ||
+				turf.distance(turf.point(canalEndPoint), turf.point(endPoint)) <= tolerance)
+		);
+	});
+
+	return candidates.length > 0 ? candidates : [];
 }

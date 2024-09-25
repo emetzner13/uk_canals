@@ -33,9 +33,6 @@ class PathStatsCalculator {
 			this.adjacencyList = this.__buildAdjacencyList(this.canals);
 		}
 
-		this.totalDistance = 0; // Initialize total distance
-		this.pathCoordinates = []; // Initialize path coordinates
-
 		this.sightings.forEach((sighting, index) => {
 			const originFuncLoc = sighting?.properties?.SAP_FUNC_LOC;
 

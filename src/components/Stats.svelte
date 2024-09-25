@@ -16,7 +16,6 @@
   let latestDate = null;
   let showStats = false;
   let canalDetails = [];
-  let isLoading = false;
 
 
 
@@ -33,7 +32,6 @@
   $: {
   data = $UserDataStore;
   if (Array.isArray(data.features) && Array.isArray(canal_geojsonData?.features)) {
-    isLoading = true;
 
     const timeResults = new PathStatsCalculator(data.features, canal_geojsonData.features).calculateTimeAndDistance();
     earliestDate = timeResults.earliestDate;
@@ -49,24 +47,13 @@
     }
 
     showStats = true;
-    isLoading = false;
   } else {
     showStats = false;
   }
 }
 </script>
 
-{#if isLoading}
-  <div class="absolute right-4 bottom-5 flex flex-col items-end gap-4">
-    <div class="bg-white p-5 rounded-lg shadow-md flex flex-col gap-3">
-      <h2 class="text-xl font-bold my-2 flex gap-2 items-center">
-        <BarChart3 />
-        Loading...
-      </h2>
-      <p>Please wait while we calculate the statistics.</p>
-    </div>
-  </div>
-{:else}
+
   {#if showStats}
     <div class="absolute right-4 bottom-5 flex flex-col items-end gap-4">
       <div class="bg-white p-5 rounded-lg shadow-md flex flex-col gap-3">
@@ -85,4 +72,3 @@
       </div>
     </div>
   {/if}
-{/if}

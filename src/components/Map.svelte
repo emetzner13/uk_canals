@@ -76,7 +76,7 @@
 	</p>
 	<SideButtons {map} {canal_geojsonData} {resetStats} />
 	<VisibilityControl {map} />
-	<Stats {canal_geojsonData} />
+	<Stats {canal_geojsonData} map={map} />
 </div>
 
 <style>

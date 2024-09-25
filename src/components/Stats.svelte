@@ -1,10 +1,12 @@
 <script>
   import { UserDataStore } from '../store/store';
-  import { calculateTimeAndDistance } from '../helpers/StatsHelpers';
+  import { addCalculatedPathLayer } from '../helpers/MapHelpers';
+  import PathStatsCalculator from '../helpers/PathStatsCalculator';
   import InfoDisplay from './InfoDisplay.svelte';
   import { BarChart3 } from 'lucide-svelte';
 
   export let canal_geojsonData;
+  export let map;
 
   let data = $UserDataStore;
   let furthestDistance = 0;
@@ -15,6 +17,8 @@
   let showStats = false;
   let canalDetails = [];
   let isLoading = false;
+
+
 
   function resetStats() {
     furthestDistance = 0;
@@ -27,22 +31,29 @@
   }
 
   $: {
-    data = $UserDataStore;
-    if (Array.isArray(data.features) && Array.isArray(canal_geojsonData?.features)) {
-      isLoading = true;
-      const timeResults = calculateTimeAndDistance(data.features, canal_geojsonData.features);
-      earliestDate = timeResults.earliestDate;
-      latestDate = timeResults.latestDate;
-      timeTaken = timeResults.timeTaken;
-      totalDistance = timeResults.totalDistance;
-      canalDetails = timeResults.canalDetails;
+  data = $UserDataStore;
+  if (Array.isArray(data.features) && Array.isArray(canal_geojsonData?.features)) {
+    isLoading = true;
 
-      showStats = true;
-      isLoading = false;
-    } else {
-      showStats = false;
+    const timeResults = new PathStatsCalculator(data.features, canal_geojsonData.features).calculateTimeAndDistance();
+    earliestDate = timeResults.earliestDate;
+    latestDate = timeResults.latestDate;
+    timeTaken = timeResults.timeTaken;
+    totalDistance = timeResults.totalDistance;
+    canalDetails = timeResults.canalDetails;
+
+    // Add path to the map
+    const pathCoordinates = timeResults.pathCoordinates;
+    if (pathCoordinates.length > 0) {
+      addCalculatedPathLayer(map, pathCoordinates);
     }
+
+    showStats = true;
+    isLoading = false;
+  } else {
+    showStats = false;
   }
+}
 </script>
 
 {#if isLoading}

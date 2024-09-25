@@ -73,7 +73,6 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 			data_dicts.push(bsightings_Obj);
 		});
 
-		console.table(data_dicts);
 		let currentDate = new Date();
 		const filtered_data = data_dicts
 			.map((sighting) => {
@@ -93,7 +92,7 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 							DaysOld: daysOld // Add days old property
 						}
 					};
-				}
+				} else console.warn(`${sighting.FUNC_LOC} was not found in canal data`);
 			})
 			.filter((entry) => entry);
 

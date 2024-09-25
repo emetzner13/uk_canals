@@ -8,6 +8,48 @@ export async function fetchGeoJSONData(url) {
 	return response.json();
 }
 
+export function addCalculatedPathLayer(map, pathCoordinates) {
+	if (!map) {
+		console.error('Map object is not initialized');
+		return;
+	}
+
+	if (!pathCoordinates || pathCoordinates.length === 0) {
+		console.error('No path coordinates provided');
+		return;
+	}
+
+	const pathGeoJSON = {
+		type: 'FeatureCollection',
+		features: pathCoordinates
+	};
+
+	if (map.getLayer('calculated-path-layer')) {
+		map.removeLayer('calculated-path-layer');
+		map.removeSource('calculated-path-source');
+	}
+
+	map.addSource('calculated-path-source', {
+		type: 'geojson',
+		data: pathGeoJSON
+	});
+
+	map.addLayer({
+		id: 'calculated-path-layer',
+		type: 'line',
+		source: 'calculated-path-source',
+		layout: {
+			'line-join': 'round',
+			'line-cap': 'round'
+		},
+		paint: {
+			'line-color': '#000000',
+			'line-width': 7,
+			'line-opacity': 0.3
+		}
+	});
+}
+
 export function addCanalsLayer(map, data) {
 	map.addSource('canals', {
 		type: 'geojson',
@@ -40,11 +82,11 @@ export function addLocksLayer(map, data) {
 		type: 'circle',
 		source: 'locks',
 		layout: {
-			'visibility': 'none'
+			visibility: 'none'
 		},
 		paint: {
 			'circle-radius': 3,
-			'circle-stroke-width': .5,
+			'circle-stroke-width': 0.5,
 			'circle-color': 'rgba(27, 9, 158, .8)',
 			'circle-stroke-color': 'white'
 		}

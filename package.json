@@ -32,7 +32,9 @@
 		"@turf/turf": "^7.0.0",
 		"lucide-svelte": "^0.390.0",
 		"mapbox-gl": "^3.4.0",
+		"myapp": "file:",
 		"papaparse": "^5.4.1",
+		"rbush": "^2.0.2",
 		"svelte-toasts": "^1.1.2",
 		"xlsx": "^0.18.5"
 	}

@@ -30,7 +30,7 @@ class PathStatsCalculator {
 		this._groupSightings();
 
 		if (Object.keys(this.canalLengths).length === 0) {
-			this.adjacencyList = this.__buildAdjacencyList(this.canals);
+			this.adjacencyList = this._buildAdjacencyList(this.canals);
 		}
 
 		this.sightings.forEach((sighting, index) => {
@@ -42,15 +42,15 @@ class PathStatsCalculator {
 
 				if (originFuncLoc && destinationFuncLoc) {
 					if (originFuncLoc !== destinationFuncLoc) {
-						const path = this.__findPath(this.adjacencyList, originFuncLoc, destinationFuncLoc);
+						const path = this._findPath(this.adjacencyList, originFuncLoc, destinationFuncLoc);
 
 						if (path) {
 							// Calculate the distance for this path segment
-							const segmentDistance = this.__calculatePathLength(path, originFuncLoc);
+							const segmentDistance = this._calculatePathLength(path, originFuncLoc);
 							this.totalDistance += segmentDistance;
 
 							// Collect path coordinates for visualization
-							this.__collectPathCoordinates(path);
+							this._collectPathCoordinates(path);
 						} else {
 							console.warn(`No path found from ${originFuncLoc} to ${destinationFuncLoc}`);
 						}
@@ -142,7 +142,7 @@ class PathStatsCalculator {
 		return !isNaN(date?.getTime());
 	}
 
-	__collectPathCoordinates(path) {
+	_collectPathCoordinates(path) {
 		path.forEach((featureId) => {
 			const featureData = this.canalLengths[featureId];
 			if (featureData) {
@@ -159,7 +159,7 @@ class PathStatsCalculator {
 		});
 	}
 
-	__calculatePathLength(path, originFeatureId) {
+	_calculatePathLength(path, originFeatureId) {
 		let totalLength = 0;
 		let visitedCanals = new Set();
 
@@ -180,7 +180,7 @@ class PathStatsCalculator {
 		return totalLength;
 	}
 
-	__getFeatureLengthInKm(canal) {
+	_getFeatureLengthInKm(canal) {
 		const lengthInKm = canal.properties.Shape__Length / 1000; // Converting meters to kilometers
 		return lengthInKm;
 	}
@@ -215,13 +215,13 @@ class PathStatsCalculator {
 		this.sightings = grouped;
 	}
 
-	__buildAdjacencyList(features, tolerance = this.TOLERANCE) {
+	_buildAdjacencyList(features, tolerance = this.TOLERANCE) {
 		const adjacencyList = {};
 		const index = rbush();
 
 		const featureItems = features.map((feature) => {
 			const featureId = feature.properties.SAP_FUNC_LOC;
-			const featureLength = this.__getFeatureLengthInKm(feature);
+			const featureLength = this._getFeatureLengthInKm(feature);
 
 			this.canalLengths[featureId] = {
 				length: featureLength,
@@ -288,7 +288,7 @@ class PathStatsCalculator {
 		return adjacencyList;
 	}
 
-	__extractEndpoints(feature, featureId) {
+	_extractEndpoints(feature, featureId) {
 		const endpoints = [];
 		const geometry = feature.geometry;
 
@@ -308,7 +308,7 @@ class PathStatsCalculator {
 		return endpoints;
 	}
 
-	__buildEndpointIndex(endpoints) {
+	_buildEndpointIndex(endpoints) {
 		const index = rbush();
 
 		const items = endpoints.map((endpoint) => {
@@ -326,7 +326,7 @@ class PathStatsCalculator {
 		return index;
 	}
 
-	__findPath(adjacencyList, startFeatureId, endFeatureId) {
+	_findPath(adjacencyList, startFeatureId, endFeatureId) {
 		//* queue for BFS and a set to keep track of visited nodes
 		const queue = [];
 		const visited = new Set();

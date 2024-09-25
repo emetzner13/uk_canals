@@ -25,7 +25,7 @@ class PathStatsCalculator {
 	/**
 	 * Calculates the total distance and time based on the sightings and canal data.
 	 */
-	calculateTimeAndDistance() {
+	async calculateTimeAndDistance() {
 		this._parseAndSortSightings();
 		this._groupSightings();
 

@@ -14,7 +14,7 @@
   /* --------------------------------- HELPERS -------------------------------- */
 
   function setUserData(data) {
-    UserDataStore.set(data); // Directly set the store
+    UserDataStore.set(data);
   }
 </script>
 

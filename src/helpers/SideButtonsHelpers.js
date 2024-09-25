@@ -2,10 +2,13 @@ import mapboxgl from 'mapbox-gl';
 import { cleanData } from './DataHelpers';
 import * as XLSX from 'xlsx';
 import { toasts } from 'svelte-toasts';
+import { isCalculating } from '../store/store';
 
 export const buttonStyle = 'cursor-pointer bg-white shadow p-2 px-4 rounded-full flex gap-2 group';
 
 export async function handleFileUpload(event, canal_geojsonData, map, setUserData) {
+	isCalculating.set(true);
+
 	const file = event.target.files[0];
 	const reader = new FileReader();
 	reader.onload = (e) => {

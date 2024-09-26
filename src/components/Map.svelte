@@ -16,7 +16,6 @@
 	import CardsTimeline from './Timeline/CardsTimeline.svelte';
 
 	$: sightingData = $UserDataStore;
-	$: console.log('sightingData', sightingData);
 
 	let map;
 	let mapContainer;
@@ -79,20 +78,11 @@
 
 	<Stats {canal_geojsonData} {map} />
 
-	<div class="absolute bottom-20 left-0 right-0 mx-auto max-w-6xl w-full p-5">
+	<div class="absolute bottom-10 px-5">
 		<CardsTimeline sightings={sightingData?.features} />
 	</div>
 </div>
 
 <style>
 	@import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-
-	.cards-timeline-container {
-		max-width: 100%;
-		overflow: hidden;
-	}
-
-	p {
-		z-index: 10;
-	}
 </style>

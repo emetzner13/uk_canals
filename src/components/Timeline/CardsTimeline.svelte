@@ -45,9 +45,9 @@
 	};
 </script>
 
-<div class="relative flex items-center justify-center w-full">
+<div class="flex flex-row gap-5 items-center justify-center w-full">
 	<button
-		class="absolute left-0 z-10 p-3 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 transition-opacity"
+		class="z-10 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 transition-opacity"
 		on:click={() => scroll('left')}
 		aria-label="Scroll Left"
 	>
@@ -55,7 +55,7 @@
 	</button>
 
 	<div
-		class="overflow-x-auto scroll-smooth scrollbar-hidden flex gap-4 px-16 py-5 w-full"
+		class="overflow-x-auto scroll-smooth scrollbar-hidden flex gap-4 py-5 w-[calc(100dvw-500px)]"
 		bind:this={scrollContainer}
 		on:mousedown|preventDefault={startDrag}
 		on:mouseup={stopDrag}
@@ -75,7 +75,7 @@
 	</div>
 
 	<button
-		class="absolute right-0 z-10 p-3 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 transition-opacity"
+		class="z-10 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 transition-opacity"
 		on:click={() => scroll('right')}
 		aria-label="Scroll Right"
 	>
@@ -98,25 +98,10 @@
 	}
 
 	button {
-		top: 50%;
-		transform: translateY(-50%);
 		width: 40px;
 		height: 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-	}
-
-	@media (max-width: 768px) {
-		button {
-			width: 30px;
-			height: 30px;
-			padding: 1.5rem;
-		}
-
-		.scrollable-container {
-			padding-left: 8rem;
-			padding-right: 8rem;
-		}
 	}
 </style>

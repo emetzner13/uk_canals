@@ -29,6 +29,7 @@
 	"type": "module",
 	"dependencies": {
 		"@mapbox/mapbox-gl-geocoder": "^5.0.2",
+		"@popperjs/core": "^2.11.8",
 		"@turf/turf": "^7.0.0",
 		"lucide-svelte": "^0.390.0",
 		"mapbox-gl": "^3.4.0",
@@ -36,6 +37,7 @@
 		"papaparse": "^5.4.1",
 		"rbush": "^2.0.2",
 		"svelte-toasts": "^1.1.2",
+		"tippy.js": "^6.3.7",
 		"xlsx": "^0.18.5"
 	}
 }

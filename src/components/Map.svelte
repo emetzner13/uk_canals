@@ -1,80 +1,103 @@
 <script>
-  import mapboxgl from 'mapbox-gl';
-  import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-  import { onMount } from 'svelte';
-  import { isCalculating } from '../store/store'; // Import the store
-  import SideButtons from './SideButtons.svelte';
-  import VisibilityControl from './VisibilityControl.svelte';
-  import {
-    fetchGeoJSONData,
-    addCanalsLayer,
-    addLocksLayer,
-    addLayerClickHandlers,
-    MAPBOX_ACCESS
-  } from '../helpers/MapHelpers';
-  import Stats from './Stats.svelte';
+	import mapboxgl from 'mapbox-gl';
+	import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+	import { onMount } from 'svelte';
+	import { UserDataStore, currentIndex } from '../store/store';
+	import SideButtons from './SideButtons.svelte';
+	import VisibilityControl from './VisibilityControl.svelte';
+	import {
+		fetchGeoJSONData,
+		addCanalsLayer,
+		addLocksLayer,
+		addLayerClickHandlers,
+		MAPBOX_ACCESS
+	} from '../helpers/MapHelpers';
+	import Stats from './Stats.svelte';
+	import CardsTimeline from './Timeline/CardsTimeline.svelte';
+	import DotsTimeline from './Timeline/DotsTimeline.svelte';
 
-  let map;
-  let mapContainer;
-  let canal_geojsonData;
-  let locks_geojsonData;
+	$: sightingData = $UserDataStore;
 
-  let lng = -1.6224;
-  let lat = 52.9033;
-  let zoom = 6;
+	let map;
+	let mapContainer;
+	let canal_geojsonData;
+	let locks_geojsonData;
 
-  function resetStats() {
-    const statsComponent = document.querySelector('stats-component');
-    if (statsComponent) {
-      statsComponent.resetStats();
-    }
-  }
+	let lng = -1.6224;
+	let lat = 52.9033;
+	let zoom = 6;
 
-  onMount(async () => {
-    const initialState = { lng: lng, lat: lat, zoom: zoom };
+	function resetStats() {
+		const statsComponent = document.querySelector('stats-component');
+		if (statsComponent) {
+			statsComponent.resetStats();
+		}
+	}
 
-    map = new mapboxgl.Map({
-      container: mapContainer,
-      accessToken: MAPBOX_ACCESS,
-      style: `mapbox://styles/endeavour-inc/ckbaw8xld02sy1iqyigmvnr75`,
-      center: [initialState.lng, initialState.lat],
-      zoom: initialState.zoom
-    });
+	onMount(async () => {
+		const initialState = { lng: lng, lat: lat, zoom: zoom };
 
-    map.once('load', async () => {
-      try {
-        const geocoder = new MapboxGeocoder({
-          accessToken: MAPBOX_ACCESS,
-          mapboxgl: mapboxgl
-        });
-        map.addControl(geocoder, 'top-right');
+		map = new mapboxgl.Map({
+			container: mapContainer,
+			accessToken: MAPBOX_ACCESS,
+			style: `mapbox://styles/endeavour-inc/ckbaw8xld02sy1iqyigmvnr75`,
+			center: [initialState.lng, initialState.lat],
+			zoom: initialState.zoom
+		});
 
-        canal_geojsonData = await fetchGeoJSONData('/data/canals_data.geojson');
-        locks_geojsonData = await fetchGeoJSONData('/data/locks_data.geojson');
+		map.once('load', async () => {
+			try {
+				const geocoder = new MapboxGeocoder({
+					accessToken: MAPBOX_ACCESS,
+					mapboxgl: mapboxgl
+				});
+				map.addControl(geocoder, 'top-right');
 
-        addCanalsLayer(map, canal_geojsonData);
-        addLocksLayer(map, locks_geojsonData);
+				canal_geojsonData = await fetchGeoJSONData('/data/canals_data.geojson');
+				locks_geojsonData = await fetchGeoJSONData('/data/locks_data.geojson');
 
-        addLayerClickHandlers(map);
-      } catch (error) {
-        console.error('Error fetching GeoJSON data:', error);
-      }
-    });
-  });
+				addCanalsLayer(map, canal_geojsonData);
+				addLocksLayer(map, locks_geojsonData);
+
+				addLayerClickHandlers(map);
+			} catch (error) {
+				console.error('Error fetching GeoJSON data:', error);
+			}
+		});
+	});
+
+	const handleDotSelect = (event) => {
+		const { index } = event.detail;
+		currentIndex.set(index);
+	};
 </script>
 
-<div>
-  <div class="absolute w-screen h-screen" bind:this={mapContainer} />
+<div class="w-screen h-screen relative">
+	<div class="absolute w-screen h-screen" bind:this={mapContainer} />
 
-  <p class="text-xl text-center w-full absolute top-0 mr-auto font-semibold p-2">
-    UK Canal Route Builder
-  </p>
-  <SideButtons {map} {canal_geojsonData} {resetStats} />
-  <VisibilityControl {map} />
-  <Stats {canal_geojsonData} map={map} />
+	<p class="text-xl text-center w-full absolute top-0 mr-auto font-semibold p-2 z-10">
+		UK Canal Route Builder
+	</p>
+
+	<SideButtons {map} {canal_geojsonData} {resetStats} />
+	<VisibilityControl {map} />
+
+	<Stats {canal_geojsonData} {map} />
+	{#if sightingData?.features}
+		<div class="absolute bottom-20 px-5">
+			<CardsTimeline sightings={sightingData?.features} {map} currentIndex={$currentIndex} />
+		</div>
+
+		<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-300px)]">
+			<DotsTimeline
+				sightings={sightingData?.features}
+				currentIndex={$currentIndex}
+				on:select={handleDotSelect}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style>
-  @import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-
+	@import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 </style>

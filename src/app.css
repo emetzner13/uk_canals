@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html,body {
+	@apply !max-h-[100dvh] max-w-[100dvw] overflow-hidden
+}
+
+
+
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
 	@apply !mt-5 !rounded-full !px-2 !right-2 shadow;
 }

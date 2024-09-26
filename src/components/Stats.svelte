@@ -20,7 +20,6 @@
 		data = $UserDataStore;
 		if (Array.isArray(data.features) && Array.isArray(canal_geojsonData?.features)) {
 			(async () => {
-
 				const statsCalculator = new PathStatsCalculator(data.features, canal_geojsonData.features);
 				await statsCalculator.calculateTimeAndDistance().then((results) => {
 					earliestDate = results.earliestDate;
@@ -36,8 +35,7 @@
 
 					showStats = true;
 
-          isCalculating.set(false);
-
+					isCalculating.set(false);
 				});
 			})();
 		} else {

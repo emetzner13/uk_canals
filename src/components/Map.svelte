@@ -2,7 +2,7 @@
 	import mapboxgl from 'mapbox-gl';
 	import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 	import { onMount } from 'svelte';
-	import { UserDataStore } from '../store/store';
+	import { UserDataStore, currentIndex } from '../store/store';
 	import SideButtons from './SideButtons.svelte';
 	import VisibilityControl from './VisibilityControl.svelte';
 	import {
@@ -16,8 +16,6 @@
 	import CardsTimeline from './Timeline/CardsTimeline.svelte';
 	import DotsTimeline from './Timeline/DotsTimeline.svelte';
 
-	import { writable } from 'svelte/store';
-
 	$: sightingData = $UserDataStore;
 
 	let map;
@@ -28,8 +26,6 @@
 	let lng = -1.6224;
 	let lat = 52.9033;
 	let zoom = 6;
-
-	const currentIndex = writable(0);
 
 	function resetStats() {
 		const statsComponent = document.querySelector('stats-component');

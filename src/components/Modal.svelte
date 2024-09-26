@@ -5,9 +5,7 @@
   export let hideActions = false;
   export let backgroundColor = '#fff';
   export let overlayColor = 'rgba(30, 30, 30, 0.8)';
-  export let transparent = false;
 
-  // New props for width and height
   export let width = '100%';
   export let maxWidth = '150px';
   export let height = 'auto';
@@ -26,7 +24,7 @@
     <div
       class="modal-content"
       style="
-        --modal-background: {transparent ? 'transparent' : backgroundColor};
+        --modal-background: {backgroundColor};
         --modal-width: {width};
         --modal-max-width: {maxWidth};
         --modal-height: {height};
@@ -45,7 +43,6 @@
 {/if}
 
 <style>
-  /* Container that holds both the overlay and the modal content */
   .modal-container {
     position: fixed;
     top: 0;
@@ -55,7 +52,6 @@
     z-index: 1000;
   }
 
-  /* Overlay that darkens the background */
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -68,7 +64,6 @@
     opacity: 0.7;
   }
 
-  /* Modal content */
   .modal-content {
     background: var(--modal-background);
     padding: 2rem;
@@ -85,10 +80,9 @@
     left: 50%;
     transform: translate(-50%, -50%);
     overflow: hidden;
-    z-index: 1001; /* Ensures modal content is above the overlay */
+    z-index: 1001;
   }
 
-  /* Close button */
   .modal-close-button {
     position: absolute;
     top: -5px;

@@ -3,15 +3,13 @@
 </script>
 
 {#if isSpinning}
-  <div class="bg-black w-full z-50 h-full absolute top-0 bg-opacity-30 flex items-center justify-center">
     <div class="loader" />
-  </div>
 {/if}
 
 <style>
 	.loader {
-		width: 50px;
-		padding: 8px;
+		width: 30px;
+		padding: 5px;
 		aspect-ratio: 1;
 		border-radius: 50%;
 		background: #0685d5;

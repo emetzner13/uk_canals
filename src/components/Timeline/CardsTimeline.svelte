@@ -3,8 +3,26 @@
 
 	export let sightings;
 	export let map;
+	export let currentIndex = 0;
 
 	let scrollContainer;
+
+	const scrollToIndex = (index) => {
+		if (!scrollContainer) return;
+
+		const cardWidth = 160;
+		const gap = 16;
+		const scrollAmount = index * (cardWidth + gap);
+
+		scrollContainer.scrollTo({
+			left: scrollAmount - scrollContainer.clientWidth / 2 + cardWidth / 2,
+			behavior: 'smooth'
+		});
+	};
+
+	$: if (currentIndex != null) {
+		scrollToIndex(currentIndex);
+	}
 
 	const scroll = (direction) => {
 		const scrollAmount = 300;
@@ -93,8 +111,12 @@
 		on:wheel={handleWheel}
 	>
 		{#if sightings && sightings.length}
-			{#each sightings as sighting}
-				<SightingCard {sighting} on:select={handleSelectSighting} />
+			{#each sightings as sighting, index}
+				<SightingCard
+					{sighting}
+					on:select={handleSelectSighting}
+					className={index === currentIndex ? 'selected' : ''}
+				/>
 			{/each}
 		{:else}
 			<p>No sightings to display.</p>
@@ -130,5 +152,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.selected {
+		border: 2px solid #333;
 	}
 </style>

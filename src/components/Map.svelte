@@ -14,6 +14,9 @@
 	} from '../helpers/MapHelpers';
 	import Stats from './Stats.svelte';
 	import CardsTimeline from './Timeline/CardsTimeline.svelte';
+	import DotsTimeline from './Timeline/DotsTimeline.svelte';
+
+	import { writable } from 'svelte/store';
 
 	$: sightingData = $UserDataStore;
 
@@ -25,6 +28,8 @@
 	let lng = -1.6224;
 	let lat = 52.9033;
 	let zoom = 6;
+
+	const currentIndex = writable(0);
 
 	function resetStats() {
 		const statsComponent = document.querySelector('stats-component');
@@ -64,6 +69,11 @@
 			}
 		});
 	});
+
+	const handleDotSelect = (event) => {
+		const { index } = event.detail;
+		currentIndex.set(index);
+	};
 </script>
 
 <div class="w-screen h-screen relative">
@@ -78,8 +88,16 @@
 
 	<Stats {canal_geojsonData} {map} />
 
-	<div class="absolute bottom-10 px-5">
-		<CardsTimeline sightings={sightingData?.features} {map} />
+	<div class="absolute bottom-20 px-5">
+		<CardsTimeline sightings={sightingData?.features} {map} currentIndex={$currentIndex} />
+	</div>
+
+	<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-300px)]">
+		<DotsTimeline
+			sightings={sightingData?.features}
+			currentIndex={$currentIndex}
+			on:select={handleDotSelect}
+		/>
 	</div>
 </div>
 

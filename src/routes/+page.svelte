@@ -1,14 +1,16 @@
 <script>
 	import '../app.css';
-	import Loader from '../components/Loader.svelte';
+	import Spinner from '../components/Spinner.svelte';
 	import Map from '../components/Map.svelte';
 	import ToastProvider from '../providers/ToastProvider.svelte';
+  	import { isCalculating } from '../store/store';
 
 	let map;
+	$isCalculating = isCalculating;
 </script>
 
 <div>
 	<ToastProvider />
-	<Loader />
+	<Spinner isSpinning={$isCalculating} />
 	<Map {map} />
 </div>

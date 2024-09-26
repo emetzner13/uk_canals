@@ -2,7 +2,6 @@
 	import { tooltip } from '../../actions/tippy';
 	import { createEventDispatcher } from 'svelte';
 
-	export let map;
 	export let sighting;
 	export let className = '';
 	export let animated = true;

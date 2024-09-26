@@ -40,8 +40,21 @@
 		if (!isDragging) return;
 		e.preventDefault();
 		const x = e.pageX || e.touches[0].pageX;
-		const walk = (x - startX) * 2; // Adjust scrolling speed
+		const walk = (x - startX) * 2;
 		scrollContainer.scrollLeft = scrollLeft - walk;
+	};
+
+	const handleWheel = (e) => {
+		e.preventDefault();
+
+		const delta = e.deltaY;
+
+		const scrollSpeed = 3;
+
+		scrollContainer.scrollBy({
+			left: delta * scrollSpeed,
+			behavior: 'smooth'
+		});
 	};
 </script>
 
@@ -64,6 +77,7 @@
 		on:touchstart={startDrag}
 		on:touchend={stopDrag}
 		on:touchmove={doDrag}
+		on:wheel={handleWheel}
 	>
 		{#if sightings && sightings.length}
 			{#each sightings as sighting}

@@ -87,18 +87,19 @@
 	<VisibilityControl {map} />
 
 	<Stats {canal_geojsonData} {map} />
+	{#if sightingData?.features}
+		<div class="absolute bottom-20 px-5">
+			<CardsTimeline sightings={sightingData?.features} {map} currentIndex={$currentIndex} />
+		</div>
 
-	<div class="absolute bottom-20 px-5">
-		<CardsTimeline sightings={sightingData?.features} {map} currentIndex={$currentIndex} />
-	</div>
-
-	<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-300px)]">
-		<DotsTimeline
-			sightings={sightingData?.features}
-			currentIndex={$currentIndex}
-			on:select={handleDotSelect}
-		/>
-	</div>
+		<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-300px)]">
+			<DotsTimeline
+				sightings={sightingData?.features}
+				currentIndex={$currentIndex}
+				on:select={handleDotSelect}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style>

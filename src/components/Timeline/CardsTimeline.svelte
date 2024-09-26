@@ -2,6 +2,7 @@
 	import SightingCard from './SightingCard.svelte';
 
 	export let sightings;
+	export let map;
 
 	let scrollContainer;
 
@@ -56,6 +57,18 @@
 			behavior: 'smooth'
 		});
 	};
+
+	const handleSelectSighting = (event) => {
+		const { coordinates } = event.detail;
+		if (coordinates && map) {
+			map.flyTo({
+				center: coordinates,
+				zoom: 14,
+				speed: 1.2,
+				essential: true
+			});
+		}
+	};
 </script>
 
 <div class="flex flex-row gap-5 items-center justify-center w-full">
@@ -81,7 +94,7 @@
 	>
 		{#if sightings && sightings.length}
 			{#each sightings as sighting}
-				<SightingCard {sighting} />
+				<SightingCard {sighting} on:select={handleSelectSighting} />
 			{/each}
 		{:else}
 			<p>No sightings to display.</p>

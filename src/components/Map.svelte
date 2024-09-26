@@ -2,7 +2,7 @@
 	import mapboxgl from 'mapbox-gl';
 	import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 	import { onMount } from 'svelte';
-	import { isCalculating, UserDataStore } from '../store/store'; // Import the store
+	import { UserDataStore } from '../store/store';
 	import SideButtons from './SideButtons.svelte';
 	import VisibilityControl from './VisibilityControl.svelte';
 	import {
@@ -79,7 +79,7 @@
 	<Stats {canal_geojsonData} {map} />
 
 	<div class="absolute bottom-10 px-5">
-		<CardsTimeline sightings={sightingData?.features} />
+		<CardsTimeline sightings={sightingData?.features} {map} />
 	</div>
 </div>
 

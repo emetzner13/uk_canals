@@ -34,20 +34,23 @@ export function addCalculatedPathLayer(map, pathCoordinates) {
 		data: pathGeoJSON
 	});
 
-	map.addLayer({
-		id: 'calculated-path-layer',
-		type: 'line',
-		source: 'calculated-path-source',
-		layout: {
-			'line-join': 'round',
-			'line-cap': 'round'
+	map.addLayer(
+		{
+			id: 'calculated-path-layer',
+			type: 'line',
+			source: 'calculated-path-source',
+			layout: {
+				'line-join': 'round',
+				'line-cap': 'round'
+			},
+			paint: {
+				'line-color': '#000000',
+				'line-width': 8,
+				'line-opacity': 0.3
+			}
 		},
-		paint: {
-			'line-color': '#000000',
-			'line-width': 7,
-			'line-opacity': 0.3
-		}
-	});
+		'user-joined-data-layer'
+	);
 }
 
 export function addCanalsLayer(map, data) {

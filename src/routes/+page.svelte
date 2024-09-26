@@ -1,10 +1,10 @@
 <script>
   import '../app.css';
-  import Spinner from '../components/Spinner.svelte';
+  import Spinner from '../components/General/Spinner.svelte';
   import Map from '../components/Map.svelte';
   import ToastProvider from '../providers/ToastProvider.svelte';
   import { isCalculating } from '../store/store';
-	import Modal from '../components/Modal.svelte';
+	import Modal from '../components/General/Modal.svelte';
 
   let map;
 </script>

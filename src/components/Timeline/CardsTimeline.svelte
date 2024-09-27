@@ -80,9 +80,9 @@
 	});
 </script>
 
-<div class="flex flex-row gap-5 items-center justify-center w-full">
+<div class="flex flex-row gap-5 items-center justify-center w-full relative">
 	<div
-		class="overflow-x-auto scroll-smooth scrollbar-hidden flex gap-4 py-5 w-[calc(100dvw-900px)]"
+		class="scrollable-container"
 		bind:this={scrollContainer}
 		on:mousedown|preventDefault={startDrag}
 		on:mouseup={stopDrag}
@@ -111,11 +111,26 @@
 </div>
 
 <style>
-	.scrollbar-hidden::-webkit-scrollbar {
-		display: none;
-	}
-	.scrollbar-hidden {
-		-ms-overflow-style: none;
+	.scrollable-container {
+		overflow-x: auto;
+		scroll-behavior: smooth;
 		scrollbar-width: none;
+		-ms-overflow-style: none;
+		display: flex;
+		gap: 1rem;
+		padding: 1.25rem 0;
+		width: calc(100vw - 800px);
+
+		mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+		mask-size: 100% 100%;
+		mask-repeat: no-repeat;
+
+		-webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+		-webkit-mask-size: 100% 100%;
+		-webkit-mask-repeat: no-repeat;
+	}
+
+	.scrollable-container::-webkit-scrollbar {
+		display: none;
 	}
 </style>

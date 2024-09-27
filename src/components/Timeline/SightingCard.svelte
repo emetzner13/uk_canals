@@ -43,15 +43,15 @@
 		arrow: true,
 		placement: 'top'
 	}}
-	class={`card bg-white p-4 rounded-md ${className} ${
+	class={` min-w-[35%] h-20 bg-white p-4 rounded-md ${className} ${
 		animated ? 'transition transform hover:scale-105 hover:shadow-lg cursor-pointer' : ''
 	} ${bordered ? 'border border-gray-200 shadow-sm' : ''}`}
 	on:click={handleClick}
 >
 	{#if sighting?.properties}
 		<div class="flex flex-col gap-1 text-[10px]">
-			<span>
-				({sighting.properties.SAP_FUNC_LOC}) - {truncatedDescription}
+			<span class="font-semibold">
+				({sighting.properties.SAP_FUNC_LOC}) - {sighting.properties.FUNC_LOC_DESC}
 			</span>
 			<span>
 				{new Date(sighting.properties.Date).toLocaleDateString('en-GB', {
@@ -63,11 +63,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.card {
-		min-width: 150px;
-		max-width: 200px;
-		position: relative;
-	}
-</style>

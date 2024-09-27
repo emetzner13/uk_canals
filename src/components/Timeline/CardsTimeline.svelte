@@ -90,16 +90,8 @@
 </script>
 
 <div class="flex flex-row gap-5 items-center justify-center w-full">
-	<button
-		class="z-10 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 transition-opacity"
-		on:click={() => scroll('left')}
-		aria-label="Scroll Left"
-	>
-		&#9664;
-	</button>
-
 	<div
-		class="overflow-x-auto scroll-smooth scrollbar-hidden flex gap-4 py-5 w-[calc(100dvw-500px)]"
+		class="overflow-x-auto scroll-smooth scrollbar-hidden flex gap-4 py-5 w-[calc(100dvw-900px)]"
 		bind:this={scrollContainer}
 		on:mousedown|preventDefault={startDrag}
 		on:mouseup={stopDrag}
@@ -122,14 +114,6 @@
 			<p>No sightings to display.</p>
 		{/if}
 	</div>
-
-	<button
-		class="z-10 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 transition-opacity"
-		on:click={() => scroll('right')}
-		aria-label="Scroll Right"
-	>
-		&#9654;
-	</button>
 </div>
 
 <style>

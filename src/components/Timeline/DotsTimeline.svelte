@@ -1,14 +1,11 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
 	import { tooltip } from '../../actions/tippy';
+	import { currentIndex } from '../../store/store';
 
 	export let sightings = [];
-	export let currentIndex = 0;
-
-	const dispatch = createEventDispatcher();
 
 	const handleDotClick = (index) => {
-		dispatch('select', { index });
+		currentIndex.set(index);
 	};
 
 	const formatDate = (dateString) => {
@@ -35,9 +32,9 @@
 					arrow: true,
 					placement: 'top'
 				}}
-				class={`dot ${currentIndex === index ? 'active' : ''}`}
+				class={`dot ${$currentIndex === index ? 'active' : ''}`}
 				on:click={() => handleDotClick(index)}
-				aria-label={`Select sighting ${index + 1}`}
+				type="button"
 			/>
 		{/each}
 	</div>

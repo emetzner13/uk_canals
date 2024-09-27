@@ -2,7 +2,7 @@
 	import mapboxgl from 'mapbox-gl';
 	import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 	import { onMount } from 'svelte';
-	import { UserDataStore, currentIndex } from '../store/store';
+	import { UserDataStore } from '../store/store';
 	import SideButtons from './SideButtons.svelte';
 	import VisibilityControl from './VisibilityControl.svelte';
 	import {
@@ -65,11 +65,6 @@
 			}
 		});
 	});
-
-	const handleDotSelect = (event) => {
-		const { index } = event.detail;
-		currentIndex.set(index);
-	};
 </script>
 
 <div class="w-screen h-screen relative">
@@ -83,17 +78,14 @@
 	<VisibilityControl {map} />
 
 	<Stats {canal_geojsonData} {map} />
+
 	{#if sightingData?.features}
 		<div class="absolute bottom-20 px-5">
-			<CardsTimeline sightings={sightingData?.features} {map} currentIndex={$currentIndex} />
+			<CardsTimeline sightings={sightingData?.features} {map} />
 		</div>
 
-		<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-300px)]">
-			<DotsTimeline
-				sightings={sightingData?.features}
-				currentIndex={$currentIndex}
-				on:select={handleDotSelect}
-			/>
+		<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-800px)]">
+			<DotsTimeline sightings={sightingData?.features} />
 		</div>
 	{/if}
 </div>

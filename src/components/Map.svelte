@@ -84,7 +84,7 @@
 			<CardsTimeline sightings={sightingData?.features} {map} />
 		</div>
 
-		<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-300px)]">
+		<div class="absolute bottom-10 w-full px-5 max-w-[calc(100dvw-800px)]">
 			<DotsTimeline sightings={sightingData?.features} />
 		</div>
 	{/if}

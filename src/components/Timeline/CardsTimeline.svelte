@@ -1,47 +1,31 @@
 <script>
+	import { onDestroy } from 'svelte';
+	import { currentIndex } from '../../store/store';
 	import SightingCard from './SightingCard.svelte';
 
-	export let sightings;
+	export let sightings = [];
 	export let map;
-	export let currentIndex = 0;
 
 	let scrollContainer;
+	let isDragging = false;
+	let startX;
+	let scrollLeft;
+
+	let isProgrammaticScroll = false;
 
 	const scrollToIndex = (index) => {
 		if (!scrollContainer) return;
 
-		const cardWidth = 160;
-		const gap = 16;
-		const scrollAmount = index * (cardWidth + gap);
-
-		scrollContainer.scrollTo({
-			left: scrollAmount - scrollContainer.clientWidth / 2 + cardWidth / 2,
-			behavior: 'smooth'
-		});
-	};
-
-	$: if (currentIndex != null) {
-		scrollToIndex(currentIndex);
-	}
-
-	const scroll = (direction) => {
-		const scrollAmount = 300;
-		if (direction === 'left') {
-			scrollContainer.scrollBy({
-				left: -scrollAmount,
-				behavior: 'smooth'
-			});
-		} else if (direction === 'right') {
-			scrollContainer.scrollBy({
-				left: scrollAmount,
-				behavior: 'smooth'
+		const cards = scrollContainer.querySelectorAll('.sighting-card');
+		const card = cards[index];
+		if (card) {
+			card.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'center'
 			});
 		}
 	};
-
-	let isDragging = false;
-	let startX;
-	let scrollLeft;
 
 	const startDrag = (e) => {
 		isDragging = true;
@@ -81,12 +65,19 @@
 		if (coordinates && map) {
 			map.flyTo({
 				center: coordinates,
-				zoom: 14,
-				speed: 1.2,
-				essential: true
+				zoom: 15
 			});
 		}
 	};
+
+	const unsubscribe = currentIndex.subscribe((index) => {
+		isProgrammaticScroll = true;
+		scrollToIndex(index);
+	});
+
+	onDestroy(() => {
+		unsubscribe();
+	});
 </script>
 
 <div class="flex flex-row gap-5 items-center justify-center w-full">
@@ -101,17 +92,20 @@
 		on:touchend={stopDrag}
 		on:touchmove={doDrag}
 		on:wheel={handleWheel}
+		role="scrollbar"
+		tabindex="0"
+		aria-controls="timeline"
+		aria-valuenow="0"
+		aria-label="Sighting cards"
 	>
 		{#if sightings && sightings.length}
 			{#each sightings as sighting, index}
 				<SightingCard
 					{sighting}
 					on:select={handleSelectSighting}
-					className={index === currentIndex ? 'selected' : ''}
+					className={index === $currentIndex ? 'selected' : ''}
 				/>
 			{/each}
-		{:else}
-			<p>No sightings to display.</p>
 		{/if}
 	</div>
 </div>
@@ -123,22 +117,5 @@
 	.scrollbar-hidden {
 		-ms-overflow-style: none;
 		scrollbar-width: none;
-	}
-
-	.active {
-		cursor: grabbing;
-		cursor: -webkit-grabbing;
-	}
-
-	button {
-		width: 40px;
-		height: 40px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.selected {
-		border: 2px solid #333;
 	}
 </style>

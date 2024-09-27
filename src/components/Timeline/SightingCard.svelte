@@ -36,24 +36,25 @@
 	};
 </script>
 
-<div
+<button
 	use:tooltip={{
 		content: fullDescription,
 		theme: 'dark',
 		arrow: true,
 		placement: 'top'
 	}}
-	class={` min-w-[35%] h-20 bg-white p-4 rounded-md ${className} ${
+	class={`sighting-card card bg-white p-4 rounded-md ${className} ${
 		animated ? 'transition transform hover:scale-105 hover:shadow-lg cursor-pointer' : ''
 	} ${bordered ? 'border border-gray-200 shadow-sm' : ''}`}
 	on:click={handleClick}
+	type="button"
 >
 	{#if sighting?.properties}
 		<div class="flex flex-col gap-1 text-[10px]">
-			<span class="font-semibold">
-				({sighting.properties.SAP_FUNC_LOC}) - {sighting.properties.FUNC_LOC_DESC}
+			<span class="font-bold">
+				({sighting.properties.SAP_FUNC_LOC}) - {truncatedDescription}
 			</span>
-			<span>
+			<span class="font-semibold">
 				{new Date(sighting.properties.Date).toLocaleDateString('en-GB', {
 					hour: '2-digit',
 					minute: '2-digit',
@@ -62,4 +63,23 @@
 			</span>
 		</div>
 	{/if}
-</div>
+</button>
+
+<style>
+	.card {
+		min-width: 200px;
+		position: relative;
+		height: 100px;
+		box-sizing: border-box;
+	}
+
+	@media (min-width: 1400px) {
+		.card {
+			min-width: 300px;
+		}
+	}
+
+	.selected {
+		border: 2px solid #333;
+	}
+</style>

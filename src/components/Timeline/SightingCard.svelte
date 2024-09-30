@@ -43,14 +43,14 @@
 		arrow: true,
 		placement: 'top'
 	}}
-	class={`sighting-card card bg-white p-4 rounded-md ${className} ${
+	class={`sighting-card card bg-white p-4 rounded-md xl:text-xs 2xl:text-base ${className} ${
 		animated ? 'transition transform hover:scale-105 hover:shadow-lg cursor-pointer' : ''
 	} ${bordered ? 'border border-gray-200 shadow-sm' : ''}`}
 	on:click={handleClick}
 	type="button"
 >
 	{#if sighting?.properties}
-		<div class="flex flex-col gap-1 text-[10px]">
+		<div class="flex flex-col gap-1">
 			<span class="font-bold">
 				({sighting.properties.SAP_FUNC_LOC}) - {truncatedDescription}
 			</span>

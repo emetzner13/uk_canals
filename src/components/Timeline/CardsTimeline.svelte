@@ -11,8 +11,6 @@
 	let startX;
 	let scrollLeft;
 
-	let isProgrammaticScroll = false;
-
 	const scrollToIndex = (index) => {
 		if (!scrollContainer) return;
 
@@ -61,7 +59,7 @@
 	};
 
 	const handleSelectSighting = (event) => {
-		const { coordinates, index } = event.detail; // Destructure index
+		const { coordinates, index } = event.detail;
 		if (coordinates && map) {
 			map.flyTo({
 				center: coordinates,
@@ -69,12 +67,11 @@
 			});
 		}
 		if (typeof index === 'number') {
-			currentIndex.set(index); // Update the currentIndex in the store
+			currentIndex.set(index);
 		}
 	};
 
 	const unsubscribe = currentIndex.subscribe((index) => {
-		isProgrammaticScroll = true;
 		scrollToIndex(index);
 	});
 

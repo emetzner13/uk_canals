@@ -61,12 +61,15 @@
 	};
 
 	const handleSelectSighting = (event) => {
-		const { coordinates } = event.detail;
+		const { coordinates, index } = event.detail; // Destructure index
 		if (coordinates && map) {
 			map.flyTo({
 				center: coordinates,
 				zoom: 15
 			});
+		}
+		if (typeof index === 'number') {
+			currentIndex.set(index); // Update the currentIndex in the store
 		}
 	};
 
@@ -102,6 +105,7 @@
 			{#each sightings as sighting, index}
 				<SightingCard
 					{sighting}
+					{index}
 					on:select={handleSelectSighting}
 					className={index === $currentIndex ? 'selected' : ''}
 				/>

@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let sighting;
+	export let index; // Accept the index as a prop
 	export let className = '';
 	export let animated = true;
 	export let bordered = true;
@@ -32,7 +33,7 @@
 			midpoint = coordinates[midpointIndex];
 		}
 
-		dispatch('select', { coordinates: midpoint });
+		dispatch('select', { coordinates: midpoint, index });
 	};
 </script>
 

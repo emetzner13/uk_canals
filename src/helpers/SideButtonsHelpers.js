@@ -222,13 +222,24 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 	toasts.success('File uploaded successfully!');
 }
 
-export function downloadUserData(userData) {
-	const blob = new Blob([JSON.stringify(userData)], { type: 'application/json' });
-	const url = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = url;
-	a.download = 'userData.geojson';
-	a.click();
-	URL.revokeObjectURL(url);
-	toasts.success('Data downloaded successfully');
+export function downloadUserData(userData, calculatedPathData) {
+	const userDataBlob = new Blob([JSON.stringify(userData)], { type: 'application/json' });
+	const userDataUrl = URL.createObjectURL(userDataBlob);
+	const userDataA = document.createElement('a');
+	userDataA.href = userDataUrl;
+	userDataA.download = 'userData.geojson';
+	userDataA.click();
+	URL.revokeObjectURL(userDataUrl);
+	toasts.success('User Data downloaded successfully');
+
+	const calculatedPathBlob = new Blob([JSON.stringify(calculatedPathData)], {
+		type: 'application/json'
+	});
+	const calculatedPathUrl = URL.createObjectURL(calculatedPathBlob);
+	const calculatedPathA = document.createElement('a');
+	calculatedPathA.href = calculatedPathUrl;
+	calculatedPathA.download = 'calculatedPath.geojson';
+	calculatedPathA.click();
+	URL.revokeObjectURL(calculatedPathUrl);
+	toasts.success('Calculated Path downloaded successfully');
 }

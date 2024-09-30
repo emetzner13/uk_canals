@@ -1,5 +1,5 @@
 <script>
-	import { isCalculating, UserDataStore } from '../store/store';
+	import { isCalculating, UserDataStore, calculatedPath } from '../store/store';
 	import { addCalculatedPathLayer } from '../helpers/MapHelpers';
 	import PathStatsCalculator from '../helpers/PathStatsCalculator';
 	import InfoDisplay from '../components/InfoDisplay.svelte';
@@ -30,6 +30,7 @@
 
 					const pathCoordinates = results.pathCoordinates;
 					if (pathCoordinates.length > 0) {
+						calculatedPath.set(pathCoordinates);
 						addCalculatedPathLayer(map, pathCoordinates);
 					}
 

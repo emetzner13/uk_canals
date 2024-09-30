@@ -3,7 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let sighting;
-	export let index; // Accept the index as a prop
+	export let index;
 	export let className = '';
 	export let animated = true;
 	export let bordered = true;
@@ -69,7 +69,6 @@
 <style>
 	.card {
 		min-width: 200px;
-		position: relative;
 		height: 100px;
 		box-sizing: border-box;
 	}

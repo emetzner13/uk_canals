@@ -227,7 +227,7 @@ export function downloadUserData(userData, calculatedPathData) {
 	const userDataUrl = URL.createObjectURL(userDataBlob);
 	const userDataA = document.createElement('a');
 	userDataA.href = userDataUrl;
-	userDataA.download = 'userData.geojson';
+	userDataA.download = 'user_sightings.geojson';
 	userDataA.click();
 	URL.revokeObjectURL(userDataUrl);
 	toasts.success('User Data downloaded successfully');
@@ -238,7 +238,7 @@ export function downloadUserData(userData, calculatedPathData) {
 	const calculatedPathUrl = URL.createObjectURL(calculatedPathBlob);
 	const calculatedPathA = document.createElement('a');
 	calculatedPathA.href = calculatedPathUrl;
-	calculatedPathA.download = 'calculatedPath.geojson';
+	calculatedPathA.download = 'sightings_path.geojson';
 	calculatedPathA.click();
 	URL.revokeObjectURL(calculatedPathUrl);
 	toasts.success('Calculated Path downloaded successfully');

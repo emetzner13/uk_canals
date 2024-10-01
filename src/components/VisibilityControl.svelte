@@ -1,7 +1,7 @@
 <script>
 	/* --------------------------------- IMPORTS -------------------------------- */
 	import { View } from 'lucide-svelte';
-	import { UserDataStore } from '../store/store';
+	import { sightingsData } from '../store/store';
 
 	/* -------------------------------- VARIABLES ------------------------------- */
 
@@ -18,13 +18,13 @@
 			name: 'Canals',
 			layer: 'canals-layer',
 			bind: 'canals',
-			color: 'rgb(48, 142, 230)',
+			color: 'rgb(48, 142, 230)'
 		},
 		{
 			name: 'Locks',
 			layer: 'locks-layer',
 			bind: 'locks',
-			color: 'rgb(27, 9, 158)',
+			color: 'rgb(27, 9, 158)'
 		}
 	];
 
@@ -40,7 +40,7 @@
 
 	// Reactive statement to update VisibilityCheckBoxes based on store data
 	$: {
-		const userData = $UserDataStore;
+		const userData = $sightingsData;
 		const sightingsExists = VisibilityCheckBoxes.some((item) => item.bind === 'sightings');
 		if (userData.features && userData.features.length > 0) {
 			if (!sightingsExists) {

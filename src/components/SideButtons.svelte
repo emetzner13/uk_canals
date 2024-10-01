@@ -3,7 +3,7 @@
 
 	import { Download, Plus } from 'lucide-svelte';
 	import { buttonStyle, downloadUserData, handleFileUpload } from '../helpers/SideButtonsHelpers';
-	import { UserDataStore, calculatedPath } from '../store/store';
+	import { sightingsData, calculatedPath } from '../store/store';
 
 	/* -------------------------------- VARIABLES ------------------------------- */
 
@@ -14,7 +14,7 @@
 	/* --------------------------------- HELPERS -------------------------------- */
 
 	function setUserData(data) {
-		UserDataStore.set(data);
+		sightingsData.set(data);
 	}
 </script>
 
@@ -35,7 +35,7 @@
 			Add sightings
 		</div>
 	</label>
-	<button class={buttonStyle} on:click={() => downloadUserData($UserDataStore, $calculatedPath)}>
+	<button class={buttonStyle} on:click={() => downloadUserData($sightingsData, $calculatedPath)}>
 		<Download />
 		Download
 	</button>

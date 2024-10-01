@@ -1,5 +1,5 @@
 <script>
-	import { isCalculating, UserDataStore, calculatedPath } from '../store/store';
+	import { isCalculating, sightingsData, calculatedPath } from '../store/store';
 	import { addCalculatedPathLayer } from '../helpers/MapHelpers';
 	import PathStatsCalculator from '../helpers/PathStatsCalculator';
 	import InfoDisplay from '../components/InfoDisplay.svelte';
@@ -8,7 +8,7 @@
 	export let canal_geojsonData;
 	export let map;
 
-	let data = $UserDataStore;
+	let data = $sightingsData;
 	let totalDistance = 0;
 	let timeTaken = null;
 	let earliestDate = null;
@@ -17,7 +17,7 @@
 	let canalDetails = [];
 
 	$: {
-		data = $UserDataStore;
+		data = $sightingsData;
 		if (Array.isArray(data.features) && Array.isArray(canal_geojsonData?.features)) {
 			(async () => {
 				const statsCalculator = new PathStatsCalculator(data.features, canal_geojsonData.features);

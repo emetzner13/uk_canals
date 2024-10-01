@@ -2,7 +2,7 @@
 	import mapboxgl from 'mapbox-gl';
 	import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 	import { onMount } from 'svelte';
-	import { UserDataStore } from '../store/store';
+	import { sightingsData } from '../store/store';
 	import SideButtons from './SideButtons.svelte';
 	import VisibilityControl from './VisibilityControl.svelte';
 	import {
@@ -16,7 +16,7 @@
 	import CardsTimeline from './Timeline/CardsTimeline.svelte';
 	import DotsTimeline from './Timeline/DotsTimeline.svelte';
 
-	$: sightingData = $UserDataStore;
+	$: sightingData = $sightingsData;
 
 	let map;
 	let mapContainer;

@@ -44,7 +44,7 @@
 		arrow: true,
 		placement: 'top'
 	}}
-	class={`sighting-card card bg-white p-4 rounded-md xl:text-xs 2xl:text-base ${className} ${
+	class={`card min-w-[200px] h-[100px] bg-white p-4 rounded-md text-xs 2xl:text-base lg&down:text-[9px] 2xl:min-w-[300px] lg&down:min-w-[150px]  ${className} ${
 		animated ? 'transition transform hover:scale-105 hover:shadow-lg cursor-pointer' : ''
 	} ${bordered ? 'border border-gray-200 shadow-sm' : ''}`}
 	on:click={handleClick}
@@ -67,18 +67,6 @@
 </button>
 
 <style>
-	.card {
-		min-width: 200px;
-		height: 100px;
-		box-sizing: border-box;
-	}
-
-	@media (min-width: 1400px) {
-		.card {
-			min-width: 300px;
-		}
-	}
-
 	.selected {
 		border: 2px solid #333;
 	}

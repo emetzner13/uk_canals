@@ -9,7 +9,7 @@ html,body {
 
 
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
-	@apply !mt-5 !rounded-full !px-2 !right-2 shadow;
+	@apply !top-10 !rounded-full !px-2 !right-2 shadow sm&down:!min-w-40 sm&down:w-40 sm&down:h-12;
 }
 
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl input::placeholder {
@@ -20,6 +20,6 @@ html,body {
 	@apply !py-4 !outline-none !border-none;
 }
 
-.mapboxgl-ctrl-geocoder--icon-search {
+/* .mapboxgl-ctrl-geocoder--icon-search {
 	@apply !w-6 !h-6 !fill-black !left-3 !top-[6px];
-}
+} */

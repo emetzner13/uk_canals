@@ -80,7 +80,7 @@
 	});
 </script>
 
-<div class="flex flex-row gap-5 items-center justify-center w-full relative">
+<div class="flex flex-row gap-5 items-center justify-center relative">
 	<div
 		class="scrollable-container"
 		bind:this={scrollContainer}
@@ -120,7 +120,6 @@
 		display: flex;
 		gap: 1rem;
 		padding: 1.25rem 0;
-		width: calc(100vw - 800px);
 
 		mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 		mask-size: 100% 100%;

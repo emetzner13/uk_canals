@@ -59,7 +59,7 @@
 </script>
 
 <button
-	class="absolute left-4 top-5 z-10 cursor-pointer bg-white shadow overflow-hidden h-auto flex flex-col gap-4 rounded-xl p-5"
+	class="absolute left-4 top-10 z-10 cursor-pointer bg-white shadow overflow-hidden h-auto flex flex-col gap-4 rounded-xl p-5"
 >
 	<h2 class="text-lg font-bold flex gap-2 items-center">
 		<View />

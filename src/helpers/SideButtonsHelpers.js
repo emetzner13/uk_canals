@@ -142,9 +142,9 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 						['linear'],
 						['get', 'DaysOld'],
 						0,
-						'rgb(196, 55, 53)', // Newer sightings are brighter red
+						'#FFFFB2', // Birght orange for new sightings
 						365,
-						'rgb(252, 177, 3)' // Older sightings are softer red
+						'#FD8D3C' // Dark orange for older sightings
 					],
 					'line-width': ['+', 1, ['*', 2, ['get', 'Count']]]
 				}

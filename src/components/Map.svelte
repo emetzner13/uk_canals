@@ -81,13 +81,13 @@
 
 	{#if sightingData?.features}
 		<div
-			class="absolute bottom-20 px-5 w-[calc(100vw-800px)] xl&down:w-[calc(100vw-500px)] md&down:hidden"
+			class="absolute bottom-20 px-5 w-[calc(100vw-800px)] xl&down:w-[calc(100vw-600px)] lg&down:hidden"
 		>
 			<CardsTimeline sightings={sightingData?.features} {map} />
 		</div>
 
 		<div
-			class="absolute bottom-10 px-5 w-[calc(100dvw-800px)] xl&down:w-[calc(100vw-500px)] md&down:hidden"
+			class="absolute bottom-10 px-5 w-[calc(100dvw-800px)] xl&down:w-[calc(100vw-600px)] lg&down:hidden"
 		>
 			<DotsTimeline sightings={sightingData?.features} />
 		</div>

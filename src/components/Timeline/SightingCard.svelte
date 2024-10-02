@@ -44,7 +44,7 @@
 		arrow: true,
 		placement: 'top'
 	}}
-	class={`card min-w-[200px] h-[100px] bg-white p-4 rounded-md text-xs 2xl:text-base lg&down:text-[9px] 2xl:min-w-[300px] lg&down:min-w-[150px]  ${className} ${
+	class={`card min-w-[200px] h-[100px] bg-white p-4 rounded-md text-xs 2xl:text-base xl&down:text-[10px] 2xl:min-w-[300px] xl&down:min-w-[180px]  ${className} ${
 		animated ? 'transition transform hover:scale-105 hover:shadow-lg cursor-pointer' : ''
 	} ${bordered ? 'border border-gray-200 shadow-sm' : ''}`}
 	on:click={handleClick}

@@ -27,14 +27,12 @@
 
 	const startDrag = (e) => {
 		isDragging = true;
-		scrollContainer.classList.add('active');
 		startX = e.pageX || e.touches[0].pageX;
 		scrollLeft = scrollContainer.scrollLeft;
 	};
 
 	const stopDrag = () => {
 		isDragging = false;
-		scrollContainer.classList.remove('active');
 	};
 
 	const doDrag = (e) => {

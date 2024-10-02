@@ -19,7 +19,7 @@ class PathStatsCalculator {
 
 		this.canalLengths = {};
 		this.pathCoordinates = [];
-		this.adjacencyList = {};
+		this.adjacencyGraph = {};
 	}
 
 	/**
@@ -30,19 +30,28 @@ class PathStatsCalculator {
 		this._groupSightings();
 
 		if (Object.keys(this.canalLengths).length === 0) {
-			this.adjacencyList = this._buildAdjacencyList(this.canals);
+			this.adjacencyGraph = this._buildAdjacencyGraph(this.canals);
 		}
 
 		this.sightings.forEach((sighting, index) => {
 			const originFuncLoc = sighting?.properties?.SAP_FUNC_LOC;
 
+			//Add the first sighting distance and path as is because we skip the origins in the _calculatePathLength function, we  add the distance of the first sighting here. the next sightings will have the distance of the previous sighting added to them
+
+			if (index === 0) {
+				const length = this._getFeatureLengthInKm(this.canalLengths[originFuncLoc].canal);
+				this.totalDistance += length;
+			}
+
+			// Skipping the last sighting because there is no next sighting to move to, its distance will be added in the previous iteration
 			if (index < this.sightings.length - 1) {
 				const nextSighting = this.sightings[index + 1];
 				const destinationFuncLoc = nextSighting?.properties?.SAP_FUNC_LOC;
 
 				if (originFuncLoc && destinationFuncLoc) {
 					if (originFuncLoc !== destinationFuncLoc) {
-						const path = this._findPath(this.adjacencyList, originFuncLoc, destinationFuncLoc);
+						// Do not calculate distance if the origin and destination are the same
+						const path = this._findPath(this.adjacencyGraph, originFuncLoc, destinationFuncLoc);
 
 						if (path) {
 							// Calculate the distance for this path segment
@@ -215,8 +224,8 @@ class PathStatsCalculator {
 		this.sightings = grouped;
 	}
 
-	_buildAdjacencyList(features, tolerance = this.TOLERANCE) {
-		const adjacencyList = {};
+	_buildAdjacencyGraph(features, tolerance = this.TOLERANCE) {
+		const adjacencyGraph = {};
 		const index = rbush();
 
 		const featureItems = features.map((feature) => {
@@ -246,8 +255,8 @@ class PathStatsCalculator {
 		featureItems.forEach((item) => {
 			const { featureId, feature } = item;
 
-			if (!adjacencyList[featureId]) {
-				adjacencyList[featureId] = new Set();
+			if (!adjacencyGraph[featureId]) {
+				adjacencyGraph[featureId] = new Set();
 			}
 
 			const potentialIntersects = index.search({
@@ -270,68 +279,30 @@ class PathStatsCalculator {
 				const intersects = turf.booleanIntersects(bufferedFeature, bufferedOtherFeature);
 
 				if (intersects) {
-					adjacencyList[featureId].add(otherFeatureId);
+					adjacencyGraph[featureId].add(otherFeatureId);
 
-					if (!adjacencyList[otherFeatureId]) {
-						adjacencyList[otherFeatureId] = new Set();
+					if (!adjacencyGraph[otherFeatureId]) {
+						adjacencyGraph[otherFeatureId] = new Set();
 					}
-					adjacencyList[otherFeatureId].add(featureId);
+					adjacencyGraph[otherFeatureId].add(featureId);
 				}
 			});
 		});
 
 		// Convert sets to arrays
-		Object.keys(adjacencyList).forEach((key) => {
-			adjacencyList[key] = Array.from(adjacencyList[key]);
+		Object.keys(adjacencyGraph).forEach((key) => {
+			adjacencyGraph[key] = Array.from(adjacencyGraph[key]);
 		});
 
-		return adjacencyList;
+		return adjacencyGraph;
 	}
 
-	_extractEndpoints(feature, featureId) {
-		const endpoints = [];
-		const geometry = feature.geometry;
-
-		if (geometry.type === 'LineString') {
-			const coords = geometry.coordinates;
-			endpoints.push({ coord: coords[0], featureId });
-			endpoints.push({ coord: coords[coords.length - 1], featureId });
-		} else if (geometry.type === 'MultiLineString') {
-			geometry.coordinates.forEach((line) => {
-				endpoints.push({ coord: line[0], featureId });
-				endpoints.push({ coord: line[line.length - 1], featureId });
-			});
-		} else {
-			console.warn('Unsupported geometry type:', geometry.type);
-		}
-
-		return endpoints;
-	}
-
-	_buildEndpointIndex(endpoints) {
-		const index = rbush();
-
-		const items = endpoints.map((endpoint) => {
-			const [x, y] = endpoint.coord;
-			return {
-				minX: x,
-				minY: y,
-				maxX: x,
-				maxY: y,
-				endpoint
-			};
-		});
-
-		index.load(items);
-		return index;
-	}
-
-	_findPath(adjacencyList, startFeatureId, endFeatureId) {
+	_findPath(adjacencyGraph, startFeatureId, endFeatureId) {
 		//* queue for BFS and a set to keep track of visited nodes
 		const queue = [];
 		const visited = new Set();
 
-		//* Object to keep track of predecessors to reconstruct the path
+		//* Object to keep track of previous nodes in the path
 		const predecessors = {};
 
 		//* Start the BFS from the startFeatureId
@@ -339,27 +310,27 @@ class PathStatsCalculator {
 		visited.add(startFeatureId);
 
 		while (queue.length > 0) {
-			const currentFeatureId = queue.shift();
+			const currentFeatureId = queue.shift(); // Dequeue - get the next item from the queue
 
 			//* If we've reached the endFeatureId, reconstruct the path
 			if (currentFeatureId === endFeatureId) {
 				const path = [];
 				let node = endFeatureId;
 				while (node !== undefined) {
-					path.unshift(node);
-					node = predecessors[node];
+					path.unshift(node); // Add to the beginning of the array
+					node = predecessors[node]; //get the previous node
 				}
 				return path;
 			}
 
 			//* Get neighbors from the adjacency list
-			const neighbors = adjacencyList[currentFeatureId] || [];
+			const neighbors = adjacencyGraph[currentFeatureId] || [];
 
 			for (const neighbor of neighbors) {
 				if (!visited.has(neighbor)) {
 					visited.add(neighbor);
-					predecessors[neighbor] = currentFeatureId;
-					queue.push(neighbor);
+					predecessors[neighbor] = currentFeatureId; // Keep track of the previous node
+					queue.push(neighbor); // Enqueue - add to the end of the queue
 				}
 			}
 		}

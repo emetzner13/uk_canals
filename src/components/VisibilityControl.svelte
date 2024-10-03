@@ -2,7 +2,12 @@
 	/* --------------------------------- IMPORTS -------------------------------- */
 	import { View } from 'lucide-svelte';
 	import { sightingsData } from '../store/store';
-
+	import {
+		NEW_SIGHTING_LAYER_COLOR,
+		OLD_SIGHTING_LAYER_COLOR,
+		CANAL_LAYER_COLOR,
+		LOCK_LAYER_COLOR
+	} from '../constants/layerColors.consants';
 	/* -------------------------------- VARIABLES ------------------------------- */
 
 	export let map;
@@ -18,13 +23,13 @@
 			name: 'Canals',
 			layer: 'canals-layer',
 			bind: 'canals',
-			color: 'rgb(48, 142, 230)'
+			color: CANAL_LAYER_COLOR
 		},
 		{
 			name: 'Locks',
 			layer: 'locks-layer',
 			bind: 'locks',
-			color: 'rgb(27, 9, 158)'
+			color: LOCK_LAYER_COLOR
 		}
 	];
 
@@ -46,10 +51,10 @@
 			if (!sightingsExists) {
 				VisibilityCheckBoxes = [
 					{
-						name: 'Sightings',
+						name: 'Sightings (New-Old)',
 						layer: 'user-joined-data-layer',
 						bind: 'sightings',
-						color: 'red'
+						color: [NEW_SIGHTING_LAYER_COLOR, OLD_SIGHTING_LAYER_COLOR]
 					},
 					...VisibilityCheckBoxes
 				];
@@ -68,15 +73,22 @@
 	<div class="flex flex-col gap-2 items-start">
 		{#each VisibilityCheckBoxes as { name, layer, bind, color }}
 			<div class="flex gap-5 items-center">
-				<label class="w-32 flex justify-start gap-2">
+				<label class="w-40 flex justify-start gap-2">
 					<input
 						type="checkbox"
 						bind:checked={visibility[bind]}
 						on:change={() => toggleVisibility(layer, visibility[bind])}
 					/>
-					<span class="cursor-pointer">{name}</span>
+					<span class="text-sm">{name}</span>
 				</label>
-				<div class="w-3 h-3 rounded-full" style="background-color: {color}" />
+				{#if Array.isArray(color)}
+					<div
+						class="w-10 h-3 rounded-full"
+						style="background: linear-gradient(to right, {color[0]}, {color[1]})"
+					/>
+				{:else}
+					<div class="w-3 h-3 rounded-full" style="background-color: {color}" />
+				{/if}
 			</div>
 		{/each}
 	</div>

@@ -1,4 +1,5 @@
 import mapboxgl from 'mapbox-gl';
+import { CANAL_LAYER_COLOR, LOCK_LAYER_COLOR } from '../constants/layerColors.consants';
 
 export const MAPBOX_ACCESS =
 	'pk.eyJ1IjoiZW5kZWF2b3VyLWluYyIsImEiOiJja2I5b2d2cHgwZzFjMzJtZXI2eG9yNzZ0In0.OFUBzawh1tyy17EAC4MQMA';
@@ -68,7 +69,7 @@ export function addCanalsLayer(map, data) {
 			'line-cap': 'round'
 		},
 		paint: {
-			'line-color': 'rgb(48, 142, 230)',
+			'line-color': CANAL_LAYER_COLOR,
 			'line-width': 1.5
 		}
 	});
@@ -90,7 +91,7 @@ export function addLocksLayer(map, data) {
 		paint: {
 			'circle-radius': 3,
 			'circle-stroke-width': 0.5,
-			'circle-color': 'rgba(27, 9, 158, .8)',
+			'circle-color': LOCK_LAYER_COLOR,
 			'circle-stroke-color': 'white'
 		}
 	});

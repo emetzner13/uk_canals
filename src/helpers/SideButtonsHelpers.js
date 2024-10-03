@@ -3,6 +3,10 @@ import { cleanData } from './DataHelpers';
 import * as XLSX from 'xlsx';
 import { toasts } from 'svelte-toasts';
 import { isCalculating } from '../store/store';
+import {
+	NEW_SIGHTING_LAYER_COLOR,
+	OLD_SIGHTING_LAYER_COLOR
+} from '../constants/layerColors.consants';
 
 export async function handleFileUpload(event, canal_geojsonData, map, setUserData) {
 	isCalculating.set(true);
@@ -57,7 +61,7 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 				time[0] = time[0].padStart(2, '0');
 
 				// Reconstruct the date string
-				const formattedDateStr = `${date[2]}-${date[1]}-${date[0]}T${time.join(':')}`;
+				const formattedDateStr = `${date[2]}-${date[1]}-${date[0]}T${time.join(':')}`; //  YYYY-MM-DDTHH:MM:SS
 				const dateObj = new Date(formattedDateStr);
 
 				if (dateObj.toString() === 'Invalid Date') {
@@ -142,9 +146,9 @@ export async function handleFileUpload(event, canal_geojsonData, map, setUserDat
 						['linear'],
 						['get', 'DaysOld'],
 						0,
-						'#FFFFB2', // Birght orange for new sightings
+						NEW_SIGHTING_LAYER_COLOR,
 						365,
-						'#FD8D3C' // Dark orange for older sightings
+						OLD_SIGHTING_LAYER_COLOR
 					],
 					'line-width': ['+', 1, ['*', 2, ['get', 'Count']]]
 				}

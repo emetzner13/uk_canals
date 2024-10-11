@@ -233,7 +233,11 @@ export function downloadUserData(userData, calculatedPathData) {
 	URL.revokeObjectURL(userDataUrl);
 	toasts.success('User Data downloaded successfully');
 
-	const calculatedPathBlob = new Blob([JSON.stringify(calculatedPathData)], {
+	const calculatedPathgGeoJSON = {
+		type: 'FeatureCollection',
+		features: calculatedPathData
+	};
+	const calculatedPathBlob = new Blob([JSON.stringify(calculatedPathgGeoJSON)], {
 		type: 'application/json'
 	});
 	const calculatedPathUrl = URL.createObjectURL(calculatedPathBlob);
